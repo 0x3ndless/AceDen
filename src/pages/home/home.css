@@ -1,0 +1,94 @@
+.title_keyword2 {
+  background: linear-gradient(90deg, rgba(118,179,236,1) 35%, rgba(0,52,102,1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+.emoji {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none; /* Make sure the emojis don't interfere with other elements */
+}
+
+.emoji li {
+  position: absolute;
+  display: block;
+  list-style: none;
+  font-size: 2rem; /* Adjust size as needed */
+  opacity: 0.1; /* Adjust opacity as needed */
+  animation: animate 25s linear infinite;
+  bottom: -150px;
+}
+
+.emoji li:nth-child(1) {
+  left: 25%;
+  animation-delay: 0s;
+}
+
+.emoji li:nth-child(2) {
+  left: 10%;
+  animation-delay: 2s;
+  animation-duration: 12s;
+}
+
+.emoji li:nth-child(3) {
+  left: 70%;
+  animation-delay: -4s;
+}
+
+.emoji li:nth-child(4) {
+  left: 40%;
+  animation-delay: 0s;
+  animation-duration: 18s;
+}
+
+.emoji li:nth-child(5) {
+  left: 65%;
+  animation-delay: 0s;
+}
+
+.emoji li:nth-child(6) {
+  left: 95%;
+  animation-delay: -3s;
+}
+
+.emoji li:nth-child(7) {
+  left: 35%;
+  animation-delay: -7s;
+}
+
+.emoji li:nth-child(8) {
+  left: 50%;
+  animation-delay: -15s;
+  animation-duration: 45s;
+}
+
+.emoji li:nth-child(9) {
+  left: 20%;
+  animation-delay: -2s;
+  animation-duration: 35s;
+}
+
+.emoji li:nth-child(10) {
+  left: 85%;
+  animation-delay: 0s;
+  animation-duration: 11s;
+}
+
+@keyframes animate {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.9;
+    border-radius: 0;
+  }
+  100% {
+    transform: translateY(-1000px) rotate(720deg);
+    opacity: 0;
+    border-radius: 50%;
+  }
+}
