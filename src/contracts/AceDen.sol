@@ -37,6 +37,7 @@ contract AceDen {
 
     mapping(uint256 => Bet) public bets; // Mapping to store bets by ID
     uint256 public betCount; // Bets counter
+    uint256 public lastProcessedBetId; // To track progress in batching
 
     constructor(address _pythContract) {
         pyth = IPyth(_pythContract);
@@ -98,7 +99,7 @@ contract AceDen {
     }
 
     // Function to settle the bet after the betting period has ended
-    function settleBet(uint256 _betId) external {
+    function settleBet(uint256 _betId) internal {
         Bet storage bet = bets[_betId];
         require(bet.creator != address(0), "Bet does not exist");
         require(bet.opponent != address(0), "Bet has no opponent");
@@ -168,5 +169,46 @@ contract AceDen {
         PythStructs.Price memory solPrice = pyth.getPrice(solPriceFeedId);
         latestSolPrice = solPrice.price;
 
+    }
+
+    // Function to settle a batch of active bets
+    function settleExpiredBetsBatch(uint256 batchSize) external {
+        require(batchSize > 0, "Batch size must be greater than 0");
+
+        uint256 endBetId = lastProcessedBetId + batchSize;
+        if (endBetId > betCount) {
+            endBetId = betCount;
+        }
+
+        for (uint256 betId = lastProcessedBetId; betId < endBetId; betId++) {
+            Bet storage bet = bets[betId];
+
+            // Checking if the bet exists and is not already settled
+            if (bet.creator != address(0) && !bet.isSettled) {
+                if (block.timestamp >= bet.endTime) {
+                    settleBet(betId);
+                }
+            }
+        }
+
+        // Updating last processed bet ID
+        lastProcessedBetId = endBetId;
+
+        // Reseting progress if all bets have been processed
+        if (lastProcessedBetId >= betCount) {
+            lastProcessedBetId = 0;
+        }
+    }
+
+    // Function to check if there are unsettled bets whose time has ended
+    function hasUnsettledExpiredBets() external view returns (bool) {
+        for (uint256 betId = 0; betId < betCount; betId++) {
+            Bet storage bet = bets[betId];
+            
+            if (bet.creator != address(0) && !bet.isSettled && block.timestamp >= bet.endTime) {
+                return true; 
+            }
+        }
+        return false;
     }
 }
