@@ -84,7 +84,7 @@ export default function HomeBanner() {
               sx={{
                 mx: 'auto',
                 maxWidth: 630,
-                mt: 3.5,
+                mt: 2.5,
               }}
             >
               Place <span className="title_keyword2" style={{ fontWeight: 'bold' }}>P2P bets</span> on cryptocurrency price movements and see if you can <span className="title_keyword2" style={{ fontWeight: 'bold' }}>predict</span> the market's next move!
@@ -98,10 +98,10 @@ export default function HomeBanner() {
               </Typography>
             </m.div>
 
-            <Stack direction="row" justifyContent="center" spacing={3} >
+            <Stack direction="row" justifyContent="center" spacing={3} sx={{mt: 2 }} >
               <m.img variants={varFade().inUp} src="/icons/base-chain.svg" width={60} />
-              <m.img variants={varFade().inUp} src="/icons/telos-dark.png" width={60} />    
-              <m.img variants={varFade().inUp} src="/icons/layer-zero.svg" width={60} />       
+              <m.img variants={varFade().inUp} src="/icons/pyth.png" width={60} />    
+              <m.img variants={varFade().inUp} src="/icons/blockscout.svg" width={80} />       
             </Stack>
           </Stack>
         </Box>

@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles';
 import { Grid, Link, Divider, Container, Typography, Stack } from '@mui/material';
 // components
 import Logo from '../../components/Logo';
-import SocialsButton from '../../components/SocialsButton';
 import useResponsive from '../../hooks/useResponsive';
 
 // ----------------------------------------------------------------------
@@ -54,13 +53,6 @@ export default function MainFooter() {
             A P2P Betting
             </Typography>
 
-            <Stack
-              direction="row"
-              justifyContent={{ xs: 'center', md: 'flex-start' }}
-              sx={{ mt: 3, mb: { xs: 5, md: 0 } }}
-            >
-              <SocialsButton sx={{ mx: 0.5 }} />
-            </Stack>
           </Grid>
 
           <Grid item xs={12} md={7}>

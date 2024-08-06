@@ -11,7 +11,6 @@ import cssStyles from '../../utils/cssStyles';
 import { HEADER } from '../../config';
 // components
 import Logo from '../../components/Logo';
-import Label from '../../components/Label';
 //
 import MenuDesktop from './MenuDesktop';
 import MenuMobile from './MenuMobile';
@@ -81,11 +80,8 @@ export default function MainHeader() {
 
           {isDesktop && <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
 
-          <Button disabled variant="outlined" component={RouterLink} to="/">
-            Coin Flip
-            <Label color="error" sx={{ ml: 1, cursor: 'pointer' }}>
-              Beta
-            </Label>
+          <Button variant="outlined" component={RouterLink} to="/">
+            Connect
           </Button>
 
           {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
