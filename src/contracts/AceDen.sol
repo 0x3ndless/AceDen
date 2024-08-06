@@ -7,11 +7,18 @@ import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
 contract AceDen {
 
     IPyth pyth;
+    bytes32 btcPriceFeedId = 0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43; // BTC/USD
     bytes32 ethPriceFeedId = 0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace; // ETH/USD
+    bytes32 solPriceFeedId = 0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d; // SOL/USD
+    
+    int public latestBtcPrice;
     int public latestEthPrice;
+    int public latestSolPrice;
 
     // Enum to represent prediction types: Bullish or Bearish
     enum Prediction { Bullish, Bearish }
+    // Enum to represent different assets
+    enum Asset { BTC, ETH, SOL }
 
     // Struct to store details of each bet
     struct Bet {
@@ -21,6 +28,7 @@ contract AceDen {
         uint256 targetPrice;      // Target price for the bet to be evaluated against
         uint256 endTime;          // End time of the bet
         Prediction creatorPrediction; // Creator's prediction
+        Asset assetType;
         bool isSettled;           
         bool isDraw;             
         bool creatorWins;         
@@ -38,7 +46,8 @@ contract AceDen {
     function createBet(
         uint256 _targetPrice,
         uint256 _duration,
-        Prediction _prediction
+        Prediction _prediction,
+        Asset _assetType
     ) external payable {
         require(msg.value > 0, "Bet amount must be greater than 0");
 
@@ -53,6 +62,7 @@ contract AceDen {
             targetPrice: _targetPrice,
             endTime: endTime,
             creatorPrediction: _prediction,
+            assetType: _assetType,
             isSettled: false,
             isDraw: false,
             creatorWins: false,
@@ -95,13 +105,22 @@ contract AceDen {
         require(block.timestamp >= bet.endTime, "Betting period not ended");
         require(!bet.isSettled, "Bet already settled");
 
+        int256 latestPrice;
 
-        if (latestEthPrice == int256(bet.targetPrice)) {
+        if (bet.assetType == Asset.ETH) {
+            latestPrice = latestEthPrice;
+        } else if (bet.assetType == Asset.BTC) {
+            latestPrice = latestBtcPrice;
+        } else if (bet.assetType == Asset.SOL) {
+            latestPrice = latestSolPrice;
+        }
+
+        if (latestPrice == int256(bet.targetPrice)) {
             bet.isDraw = true;
         } else if (bet.creatorPrediction == Prediction.Bullish) {
-            bet.creatorWins = latestEthPrice > int256(bet.targetPrice); // Bullish: creator wins if latestEthPrice > target
+            bet.creatorWins = latestPrice > int256(bet.targetPrice); // Bullish: creator wins if latestPrice > target
         } else if (bet.creatorPrediction == Prediction.Bearish) {
-            bet.creatorWins = latestEthPrice < int256(bet.targetPrice); // Bearish: creator wins if latestEthPrice < target
+            bet.creatorWins = latestPrice < int256(bet.targetPrice); // Bearish: creator wins if latestPrice < target
         }
 
         bet.isSettled = true;
@@ -132,6 +151,7 @@ contract AceDen {
         bet.rewardClaimed = true;
     }
 
+    //Function to update latest asset price with Pyth latest price update
     function updateLatestPrice(bytes[] calldata priceUpdate) public payable {
         uint fee = pyth.getUpdateFee(priceUpdate);
         pyth.updatePriceFeeds{ value: fee }(priceUpdate);
