@@ -156,8 +156,17 @@ contract AceDen {
         uint fee = pyth.getUpdateFee(priceUpdate);
         pyth.updatePriceFeeds{ value: fee }(priceUpdate);
 
-        PythStructs.Price memory price = pyth.getPrice(ethPriceFeedId);
+        // Update BTC price
+        PythStructs.Price memory btcPrice = pyth.getPrice(btcPriceFeedId);
+        latestBtcPrice = btcPrice.price;
 
-        latestEthPrice = price.price;
+        // Update ETH price
+        PythStructs.Price memory ethPrice = pyth.getPrice(ethPriceFeedId);
+        latestEthPrice = ethPrice.price;
+
+        // Update SOL price
+        PythStructs.Price memory solPrice = pyth.getPrice(solPriceFeedId);
+        latestSolPrice = solPrice.price;
+
     }
 }
