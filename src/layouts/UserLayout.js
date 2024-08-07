@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link as RouterLink } from 'react-router-dom';
 import { useAccount } from 'wagmi'
 // hooks
 import useOffSetTop from '../hooks/useOffSetTop';
@@ -87,7 +87,7 @@ export default function UserLayout() {
 
           {isConnected && (localStorage.getItem('access_token') !== null) ?
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-              <Button variant='outlined'>Create Bet</Button>
+              <Button component={RouterLink} to='/bet/create' variant='outlined'>Create Bet</Button>
               <AccountPopover />
             </Stack> : null
           }       

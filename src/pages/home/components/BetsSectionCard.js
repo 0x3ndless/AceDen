@@ -25,7 +25,7 @@ export default function BetsSectionCard() {
 
   const settings = {
     arrows: false,
-    slidesToShow: 4,
+    slidesToShow: 3,
     infinite: false,
     centerPadding: '0px',
     rtl: Boolean(theme.direction === 'rtl'),

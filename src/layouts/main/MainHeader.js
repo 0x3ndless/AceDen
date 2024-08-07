@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, AppBar, Toolbar, Container, Stack, Button } from '@mui/material';
@@ -93,7 +93,7 @@ export default function MainHeader() {
 
           {isConnected && (localStorage.getItem('access_token') !== null) ?
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-              <Button variant='outlined'>Create Bet</Button>
+              <Button component={RouterLink} to='/bet/create' variant='outlined'>Create Bet</Button>
               <AccountPopover />
             </Stack> : null
           }       
