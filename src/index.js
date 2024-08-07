@@ -22,15 +22,19 @@ import { HelmetProvider } from 'react-helmet-async';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { CollapseDrawerProvider } from './contexts/CollapseDrawerContext';
 import App from './App';
+import { store } from './redux/store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <HelmetProvider>
     <SettingsProvider>
       <CollapseDrawerProvider>
+      <Provider store={store}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
+      </Provider>
       </CollapseDrawerProvider>
     </SettingsProvider>
   </HelmetProvider>,

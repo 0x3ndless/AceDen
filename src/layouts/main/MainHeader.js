@@ -16,6 +16,8 @@ import MenuDesktop from './MenuDesktop';
 import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
 import Connect from '../../pages/authentication/Connect';
+import { useAccount } from 'wagmi';
+import ConnectAuthorize from '../../pages/authentication/ConnectAuthorize';
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +58,9 @@ export default function MainHeader() {
 
   const isHome = pathname === '/';
 
+  const accessTokenExists = localStorage.getItem('access_token') !== null;
+  const isConnected = useAccount().isConnected;
+
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent' }}>
       <ToolbarStyle
@@ -81,7 +86,9 @@ export default function MainHeader() {
 
           {isDesktop && <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
 
-          <Connect />
+          {!accessTokenExists && isConnected ? 
+            <ConnectAuthorize /> : !accessTokenExists || (!isConnected) ? <Connect /> : null
+           }
 
           {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
           

@@ -111,8 +111,7 @@ export default function ConnectAuthorize() {
     //Create user
 
     var postData = {
-      wallet: address,
-      wallet_type: 'external',
+      wallet: address
     };
     
     let axiosConfig = {
@@ -130,7 +129,6 @@ export default function ConnectAuthorize() {
         const item = {
           token: resBody.token,
           wallet: address,
-          wallet_type: 'external',
           expiry: now,
         }
         localStorage.setItem('access_token', JSON.stringify(item));
@@ -143,7 +141,6 @@ export default function ConnectAuthorize() {
       const item = {
         token: resBody.token,
         wallet: address,
-        wallet_type: 'external',
         expiry: now,
       }
       localStorage.setItem('access_token', JSON.stringify(item));
