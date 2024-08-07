@@ -31,7 +31,7 @@ export default function Page404() {
               Lost in the Digital Wilderness!
               </Typography>
             </m.div>
-            <Typography sx={{ color: 'text.secondary' }}>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>
             Oops! The page you're seeking has vanished into the digital abyss. Embrace the unexpected and explore new online horizons!
             </Typography>
 
@@ -39,7 +39,7 @@ export default function Page404() {
               <Image src="/assets/illustration/portal.gif"/>
             </m.div>
 
-            <Button to="/" variant="outlined" component={RouterLink}>
+            <Button to="/" sx={{mt: 2}} variant="outlined" component={RouterLink}>
               Go to Home
             </Button>
           </Box>

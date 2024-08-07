@@ -34,7 +34,7 @@ export default function AccountPopover() {
   const { disconnect } = useDisconnect()
 
   const dispatch = useDispatch();
-  const { loadingUser, userData } = useSelector((state) => ({...state.app}));
+  const { userData } = useSelector((state) => ({...state.app}));
   
   function disconnected () {
       disconnect();
@@ -96,21 +96,10 @@ export default function AccountPopover() {
         }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-        <Typography variant="subtitle2" noWrap sx={{textTransform: 'capitalize'}}>
-          {userData && userData[0] && userData[0].username !== null && userData[0].username !== '' ? (
-            loadingUser ? (
-              <>...</>
-            ) : (
-              userData[0].username
-            )
-          ) : (
-            <>Unnamed</>
-          )}
+        <Typography variant="subtitle2" noWrap sx={{textTransform: 'capitalize', color: 'text.secondary'}}>
+          {`${userData && userData[0] && userData[0].wallet.substr(0, 5)}...${userData && userData[0] && userData[0].wallet.substr(-5)}`}
         </Typography>
 
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {userData && userData[0] && userData[0].wallet}
-          </Typography>
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

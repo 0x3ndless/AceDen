@@ -1,8 +1,10 @@
-import { Suspense, lazy } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useRoutes, useLocation, Navigate } from 'react-router-dom';
 // layouts
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
+import UserLayout from '../layouts/UserLayout';
 import LoadingScreen from '../components/LoadingScreen';
+import { useAccount } from 'wagmi';
 // ----------------------------------------------------------------------
 
 const Loadable = (Component) => (props) => {
@@ -16,6 +18,18 @@ const Loadable = (Component) => (props) => {
   );
 };
 
+// Custom higher-order component for checking access token and isConnected
+const ProtectedRoute = ({ element, ...rest }) => {
+  const accessTokenExists = localStorage.getItem('access_token') !== null;
+  const isConnected = useAccount().isConnected;
+
+  if (!accessTokenExists || (!isConnected)) {
+    return <Navigate to="/" />;
+  }
+
+  return React.cloneElement(element, rest);
+};
+
 export default function Router() {
   return useRoutes([
 
@@ -23,10 +37,15 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '/', element: <Home/>},
-        // { path: '/tokenomics', element: <Tokenomics/>},
-        // { path: '/presale', element: <Presale/>},
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" replace /> },
+      ]
+    },
+
+    {
+      element: <UserLayout />,
+      children: [
+        { path: '/profile', element: <ProtectedRoute element= {<Profile />} />},
       ]
     },
 
@@ -34,8 +53,7 @@ export default function Router() {
 }
 
 
-// Dashboard
+// App Routes
 const Home = Loadable(lazy(() => import('../pages/Home')));
-// const Tokenomics = Loadable(lazy(() => import('../pages/Tokenomics')));
-// const Presale = Loadable(lazy(() => import('../pages/Presale')));
+const Profile = Loadable(lazy(() => import('../pages/Profile')));
 const Page404 = Loadable(lazy(() => import('../pages/Page404')));
