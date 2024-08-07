@@ -27,7 +27,7 @@ export default function Bet() {
           ]}
         />
 
-        {/* <BetForm/> */}
+        <BetForm/>
 
       </Container>
     </Page>
