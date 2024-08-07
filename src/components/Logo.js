@@ -16,7 +16,7 @@ export default function Logo({ disabledLink = false, sx }) {
 
   const logo = (
     <Box sx={{ flexGrow: 1, width: 35, height: 35, display: 'flex', ...sx  }}>
-     <Box component="img"src='/favicon/logo.png'alt="Purra"/>
+     <Box component="img"src='/favicon/logo.png'alt="Aceden"/>
     </Box>
   );
 

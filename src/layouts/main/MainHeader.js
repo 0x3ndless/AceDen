@@ -1,7 +1,7 @@
-import { useLocation, Link as RouterLink } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, Button, AppBar, Toolbar, Container, } from '@mui/material';
+import { Box, AppBar, Toolbar, Container, } from '@mui/material';
 // hooks
 import useOffSetTop from '../../hooks/useOffSetTop';
 import useResponsive from '../../hooks/useResponsive';
@@ -15,6 +15,7 @@ import Logo from '../../components/Logo';
 import MenuDesktop from './MenuDesktop';
 import MenuMobile from './MenuMobile';
 import navConfig from './MenuConfig';
+import Connect from '../../pages/authentication/Connect';
 
 // ----------------------------------------------------------------------
 
@@ -80,9 +81,7 @@ export default function MainHeader() {
 
           {isDesktop && <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
 
-          <Button variant="outlined" component={RouterLink} to="/">
-            Connect
-          </Button>
+          <Connect />
 
           {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
           
