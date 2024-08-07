@@ -1,19 +1,28 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 //wagmi
-import {useAccount, useDisconnect} from 'wagmi'
+import { useDisconnect,} from 'wagmi'
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar } from '@mui/material';
 // components
 import MenuPopover from '../../../components/MenuPopover';
 import { IconButtonAnimate } from '../../../components/animate';
+import Iconify from '../../../components/Iconify';
+// redux
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserData } from '../../../redux/features/contractSlice';
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
-    label: 'Home',
-    linkTo: '/',
+    label: 'Profile',
+    linkTo: '/profile',
+  },
+  {
+    label: 'Explore',
+    linkTo: '/explore',
   },
 ];
 
@@ -22,13 +31,14 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
-  const { address } = useAccount()
   const { disconnect } = useDisconnect()
 
-
+  const dispatch = useDispatch();
+  const { loadingUser, userData } = useSelector((state) => ({...state.app}));
+  
   function disconnected () {
-    disconnect()
-    localStorage.clear();
+      disconnect();
+      localStorage.clear();
   }
 
   const handleOpen = (event) => {
@@ -39,8 +49,18 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+
+  const fetchUser = () => {
+    dispatch(getUserData());
+  }
+
+  useEffect(() => {
+      fetchUser();
+  }, []);
+
   return (
     <>
+    
       <IconButtonAnimate
         onClick={handleOpen}
         sx={{
@@ -58,7 +78,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src="" alt="User" />
+       <Avatar sx={{ border: '1px dotted', borderColor: 'text.secondary', background: 'transparent', borderRadius: '50%' }}><Iconify icon={'streamline-emojis:cat-face'} /></Avatar>
       </IconButtonAnimate>
 
       <MenuPopover
@@ -76,11 +96,20 @@ export default function AccountPopover() {
         }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          {/* <Typography variant="subtitle2" noWrap>
-            Rayan Moran
-          </Typography> */}
+        <Typography variant="subtitle2" noWrap sx={{textTransform: 'capitalize'}}>
+          {userData && userData[0] && userData[0].username !== null && userData[0].username !== '' ? (
+            loadingUser ? (
+              <>...</>
+            ) : (
+              userData[0].username
+            )
+          ) : (
+            <>Unnamed</>
+          )}
+        </Typography>
+
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {address}
+            {userData && userData[0] && userData[0].wallet}
           </Typography>
         </Box>
 
@@ -88,7 +117,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} to={option.linkTo} onClick={handleClose}>
+            <MenuItem key={option.label} to={option.linkTo} onClick={handleClose} component={RouterLink}>
               {option.label}
             </MenuItem>
           ))}
@@ -96,7 +125,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem sx={{ m: 1 }} onClick={disconnected}>Disconnect</MenuItem>
+        <MenuItem sx={{ m: 1, color: '#ff3333' }} onClick={disconnected}>Disconnect</MenuItem>
       </MenuPopover>
     </>
   );

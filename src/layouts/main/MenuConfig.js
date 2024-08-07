@@ -11,7 +11,7 @@ const ICON_SIZE = {
 const menuConfig = [
   {
     title: 'Leaderboard',
-    icon: <Iconify icon={'ph:chart-donut'} {...ICON_SIZE} />,
+    icon: <Iconify icon={'material-symbols:trophy-outline'} {...ICON_SIZE} />,
     path: '/leaderboard',
   },
 ];

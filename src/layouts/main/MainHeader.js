@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, AppBar, Toolbar, Container, } from '@mui/material';
+import { Box, AppBar, Toolbar, Container, Stack, Button } from '@mui/material';
 // hooks
 import useOffSetTop from '../../hooks/useOffSetTop';
 import useResponsive from '../../hooks/useResponsive';
@@ -18,6 +18,7 @@ import navConfig from './MenuConfig';
 import Connect from '../../pages/authentication/Connect';
 import { useAccount } from 'wagmi';
 import ConnectAuthorize from '../../pages/authentication/ConnectAuthorize';
+import AccountPopover from '../dashboard/header/AccountPopover';
 
 // ----------------------------------------------------------------------
 
@@ -89,6 +90,13 @@ export default function MainHeader() {
           {!accessTokenExists && isConnected ? 
             <ConnectAuthorize /> : !accessTokenExists || (!isConnected) ? <Connect /> : null
            }
+
+          {isConnected && (localStorage.getItem('access_token') !== null) ?
+            <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+              <Button variant='outlined'>Create Bet</Button>
+              <AccountPopover />
+            </Stack> : null
+          }       
 
           {!isDesktop && <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />}
           
