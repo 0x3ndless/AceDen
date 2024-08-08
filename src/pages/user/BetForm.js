@@ -157,7 +157,6 @@ const BetForm = () => {
     //good till heree 
     const BetCreatedEvent = receipt.events.find((event) => event.event === 'BetCreated');
     const getBetID = BetCreatedEvent.args[0];
-    console.log(getBetID)
     const betID = getBetID.toNumber();
   
     const betData = {
@@ -182,7 +181,7 @@ const BetForm = () => {
     setTimeout(() => {
       clearInterval(intervalId);
       setOpenMessage(false);
-      navigate('/explore');
+      navigate('/profile');
     }, count * 500);
 
   } catch (error) {
