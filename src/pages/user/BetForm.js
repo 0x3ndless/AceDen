@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../components/Iconify';
 import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography, Link, Dialog, DialogContent, DialogContentText } from '@mui/material';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'; 
+import { MobileDateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 //Redux
 import { useDispatch } from 'react-redux';
@@ -352,14 +352,14 @@ const BetForm = () => {
 
                 <Grid item xs={12}>
                   <Stack spacing={2}>
-                    <DateTimePicker
+                    <MobileDateTimePicker
                       label="Bet ends"
                       value={betEnds}
                       onChange={handleBetEndsChange}
                       renderInput={(params) => <TextField {...params} fullWidth />}
                       minDateTime={new Date()} 
                     />
-                    <DateTimePicker
+                    <MobileDateTimePicker
                       label="Join until"
                       value={joinUntil}
                       onChange={handleJoinUntilChange}
