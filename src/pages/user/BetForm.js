@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Iconify from '../../components/Iconify';
-import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography, Link, Dialog, DialogContent, DialogContentText } from '@mui/material';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'; 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+//Redux
 import { useDispatch } from 'react-redux';
+import { createBet } from "../../redux/features/contractSlice";
+//ABIS smart contract
+import AceDenABIS from '../../abis/AceDen.json';
+//-----------------------Lottie
+import Lottie from 'react-lottie';
+import successAnimation from '../../animations/success.json';
+import loadingAnimation from '../../animations/loading.json';
+import ConfettiExplosion from 'react-confetti-explosion';
 
 const cryptoIds = {
   btc: '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
@@ -41,11 +51,38 @@ const fetchCryptoPrice = async (crypto) => {
 
 const BetForm = () => {
 
+   //--------------------------------------------------------------
+
+    // Lottie animation options for the different states
+    const successAnimationOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: successAnimation,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice',
+      },
+    };
+
+    const loadingAnimationOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: loadingAnimation,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice',
+      },
+    };
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const ethers = require("ethers");
 
   // States
   const [formData, setFormData] = useState({ target_price: '', bet_amount: '' });
-  const [open, setOpen] = useState(false);
+  const [, setOpen] = useState(false);
+  const [openMessage, setOpenMessage] = useState(false);
+  const [message, setMessage] = useState(`Please, sign the transaction...`);
+  const [transaction, setTransaction] = useState('');
+  const [count, setCount] = useState(5);
   const [predictionType, setPredictionType] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState(''); // State for selected cryptocurrency
   const [cryptoPrice, setCryptoPrice] = useState('Loading...'); // State for storing current price
@@ -79,6 +116,82 @@ const BetForm = () => {
     }
   };
 
+
+  //handle state change
+  const handleStateChange = () => {
+    setFormData({target_price: '', bet_amount: ''});
+    setPredictionType('');
+    setSelectedCrypto('');
+    setCryptoPrice('Loading...');
+    setBetEnds(null);
+    setJoinUntil(null);
+  }
+
+  //-------------------------------------------------------------
+  async function handleCreateBet(e) {
+
+    e.preventDefault();
+
+    try {
+
+    setOpenMessage(true);
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, AceDenABIS, signer);
+  
+    const targetPrice = Number(formData.target_price + '00000000');
+    const betEndsInSeconds = dateToSeconds(betEnds)
+    const prediction = predictionType === 'bullish' ? 0 : 1;
+    const assetType = selectedCrypto === 'btc' ? 0 : selectedCrypto === 'eth' ? 1 : 2;
+    const betAmount = Number(formData.bet_amount);
+    const betAmountInWei = betAmount * 1e18;
+
+    setMessage('Please, sign the transaction...');
+  
+    const createBetOnChain = await contract.createBet(targetPrice, betEndsInSeconds, prediction, assetType, {value: betAmountInWei});
+
+    setMessage('Creating a bet on the blockchain...');
+  
+    const receipt = await createBetOnChain.wait();
+    //good till heree 
+    const BetCreatedEvent = receipt.events.find((event) => event.event === 'BetCreated');
+    const getBetID = BetCreatedEvent.args[0];
+    console.log(getBetID)
+    const betID = getBetID.toNumber();
+  
+    const betData = {
+      betId: betID,
+      bet_amount: Number(formData.bet_amount),
+      targetPrice: Number(formData.target_price),
+      endTime: betEndsInSeconds,
+      creatorPrediction: predictionType,
+      assetType: selectedCrypto,
+    };
+  
+    setMessage('Almost done...');
+    await dispatch(createBet({ betData }));
+    setTransaction(receipt.transactionHash);
+    setMessage('Bet created successfully!!');
+  
+    const intervalId = setInterval(() => {
+      setCount((prevCountdown) => prevCountdown - 1);
+    }, 500);
+  
+    handleStateChange();
+    setTimeout(() => {
+      clearInterval(intervalId);
+      setOpenMessage(false);
+      navigate('/explore');
+    }, count * 500);
+
+  } catch (error) {
+    console.error("Error during creating a bet:", error);
+    handleStateChange();
+    setOpenMessage(false);
+  }
+  }
+
   // Update price when cryptocurrency changes
   useEffect(() => {
     const updatePrice = async () => {
@@ -90,8 +203,46 @@ const BetForm = () => {
   }, [selectedCrypto]);
 
   return (
+  <>
+    <Dialog
+        open={openMessage}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{ sx: { width: 330 } }} 
+      >
+        <DialogContent sx={{ p: 4, textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center' }}>
+            {message === 'Bet created successfully!!' ? (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                  <ConfettiExplosion zIndex={1500} duration={4200} />
+                </div>  
+                <Lottie options={successAnimationOptions} height={100} width={100} />
+                <Typography variant="h6" sx={{mt: 1}}>Created successfully!! 🎉</Typography>
+              </>
+            ) :  (
+              <>
+                <Lottie options={loadingAnimationOptions} height={100} width={100} />
+                <Typography variant="h6" sx={{mt: 1}}>Creating (Do not close)</Typography>
+              </>
+            )}
+          </Box>
+
+          <DialogContentText id="alert-dialog-description">
+            {message === 'Bet created successfully!!' ? `Pop-up will close in ${count} seconds` : message}
+            {message === 'Bet created successfully!!' &&
+            <>
+            <br></br>
+            <Link href={`https://sepolia.basescan.org/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
+            </>
+            }
+          </DialogContentText>
+
+        </DialogContent>
+      </Dialog>
+
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <form>
+      <form onSubmit={handleCreateBet}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <Card sx={{ p: 3 }}>
@@ -225,7 +376,7 @@ const BetForm = () => {
                   <TextField
                     InputProps={{
                       startAdornment: <InputAdornment position="start"><Iconify icon="cryptocurrency-color:eth" height={23} width={23}/></InputAdornment>,
-                      inputProps: { min: 1 },
+                      inputProps: { min: '0.0001', step: '0.0001' },
                     }}
                     type='number'
                     required
@@ -249,13 +400,7 @@ const BetForm = () => {
                   type="submit"
                   variant="contained"
                   size='large'
-                  onClick={() => {
-                    const betEndsInSeconds = dateToSeconds(betEnds);
-                    const joinUntilInSeconds = dateToSeconds(joinUntil);
-                    console.log('Selected Crypto:', selectedCrypto);
-                    console.log('Bet Ends:', betEndsInSeconds, 'Join Until:', joinUntilInSeconds);
-                    // Dispatch your redux action here
-                  }}
+                  disabled={openMessage === true ? true : false}
                 >
                   Create Bet
                 </Button>
@@ -265,6 +410,7 @@ const BetForm = () => {
         </Grid>
       </form>
     </LocalizationProvider>
+    </>
   );
 };
 

@@ -39,6 +39,9 @@ contract AceDen {
     uint256 public betCount; // Bets counter
     uint256 public lastProcessedBetId; // To track progress in batching
 
+    // Event for new bet creation
+    event BetCreated(uint256 betId, address creator, uint256 targetPrice, uint256 endTime, Prediction creatorPrediction, Asset assetType);
+
     constructor(address _pythContract) {
         pyth = IPyth(_pythContract);
     }
@@ -69,7 +72,8 @@ contract AceDen {
             creatorWins: false,
             rewardClaimed: false
         });
-
+        // Emit the BetCreated event
+        emit BetCreated(betCount, msg.sender, _targetPrice, endTime, _prediction, _assetType);
         // Increment the bet count
         betCount++;
     }

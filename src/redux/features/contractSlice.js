@@ -108,7 +108,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
 
     //Post request for creating a bet
     export const createBet = createAsyncThunk("contract/createBet", async ({betData}) => {
-        return fetch(`${process.env.REACT_APP_MARKET_API_URL}/api/bet/new`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/api/bet/new`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -130,7 +130,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
 
     //Remove certain listing 
     export const removeBet = createAsyncThunk("contract/removeBet", async ({id}) => {
-        return fetch(`${process.env.REACT_APP_MARKET_API_URL}/api/bet/delete/${id}/`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/api/bet/delete/${id}/`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -144,7 +144,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
 
     //Update bet details
     export const updateBet = createAsyncThunk("contract/updateBet", async ({betData, id}) => {
-        return fetch(`${process.env.REACT_APP_MARKET_API_URL}/api/bet/update/${id}/`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/api/bet/update/${id}/`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -168,7 +168,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
 
 // Join Bet
     export const joinBet = createAsyncThunk("contract/joinBet", async ({id}) => {
-        return fetch(`${process.env.REACT_APP_MARKET_API_URL}/api/bet/join/${id}/`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/api/bet/join/${id}/`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
