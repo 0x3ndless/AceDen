@@ -1,9 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Iconify from '../../components/Iconify';
 import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography } from '@mui/material';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'; 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useDispatch } from 'react-redux';
+
+const cryptoIds = {
+  btc: '0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43',
+  eth: '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+  sol: '0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d',
+};
+
+const fetchCryptoPrice = async (crypto) => {
+  if (!crypto) {
+    return '....';
+  }
+
+  const id = cryptoIds[crypto];
+
+  try {
+    const response = await fetch(
+      `https://hermes.pyth.network/v2/updates/price/latest?ids%5B%5D=${id}&encoding=hex&parsed=true`
+    );
+    const data = await response.json();
+
+    // Assume that the API returns an object with price information
+    const priceInfo = data && data.parsed?.[0]?.price?.price;
+    
+    // Convert to a number and scale appropriately
+    const updatedInfo = Number(priceInfo) / 100000000; // Adjust the divisor as needed
+
+    // Format the number with commas and two decimal places
+    return updatedInfo ? `$${updatedInfo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Not Available';
+  } catch (error) {
+    console.error('Error fetching crypto price:', error);
+    return 'Not Available';
+  }
+};
+
 
 const BetForm = () => {
 
@@ -14,23 +48,11 @@ const BetForm = () => {
   const [open, setOpen] = useState(false);
   const [predictionType, setPredictionType] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState(''); // State for selected cryptocurrency
-  const [cryptoPrice, setCryptoPrice] = useState(''); // State for storing current price
+  const [cryptoPrice, setCryptoPrice] = useState('Loading...'); // State for storing current price
 
   // Date/time states
   const [betEnds, setBetEnds] = useState(null);
   const [joinUntil, setJoinUntil] = useState(null);
-
-  // Function to fetch and set current price based on selected cryptocurrency
-  const fetchCryptoPrice = (crypto) => {
-    // Example: Fetch current price from an API
-    // You should replace this with actual API call logic
-    const prices = {
-      btc: '$54,230',
-      eth: '$1,850',
-      sol: '$20'
-    };
-    return prices[crypto] || 'Not Available';
-  };
 
   // Handle Prediction type
   const handleChangeMetadata = (event) => {
@@ -58,8 +80,13 @@ const BetForm = () => {
   };
 
   // Update price when cryptocurrency changes
-  React.useEffect(() => {
-    setCryptoPrice(fetchCryptoPrice(selectedCrypto));
+  useEffect(() => {
+    const updatePrice = async () => {
+      const price = await fetchCryptoPrice(selectedCrypto);
+      setCryptoPrice(price);
+    };
+
+    updatePrice();
   }, [selectedCrypto]);
 
   return (
