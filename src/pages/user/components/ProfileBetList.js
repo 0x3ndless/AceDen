@@ -8,7 +8,7 @@ import ProfileBetCard from './ProfileBetCard';
 export default function ProfileBetList({betList}) {
   
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }} >
+    <Box sx={{ display: 'flex',  }} >
     <Box
       sx={{
         display: 'grid',

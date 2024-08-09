@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Iconify from '../../../components/Iconify';
 // @mui
-import { Card, Typography, Tooltip, IconButton, Avatar, Divider, Grid, Button } from '@mui/material';
+import { Card, Typography, Tooltip, IconButton, Avatar, Divider, Grid } from '@mui/material';
+import CancelBet from './CancelBet';
 // ----------------------------------------------------------------------
 
 export default function ProfileBetCard({ data }) {
@@ -114,9 +115,7 @@ export default function ProfileBetCard({ data }) {
 
         <Divider sx={{ width: '100%', mb: 2 }} />
 
-        <Button variant="outlined" color='error' sx={{ mb: 2 }}>
-          Cancel Bet
-        </Button>
+        <CancelBet data={data && data} />
       </Card>
     </>
   );

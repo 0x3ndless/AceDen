@@ -199,7 +199,6 @@ const BetForm = () => {
     setMessage('Creating a bet on the blockchain...');
   
     const receipt = await createBetOnChain.wait();
-    //good till heree 
     const BetCreatedEvent = receipt.events.find((event) => event.event === 'BetCreated');
     const getBetID = BetCreatedEvent.args[0];
     const betID = getBetID.toNumber();

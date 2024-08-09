@@ -132,7 +132,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
     //Remove certain listing 
     export const removeBet = createAsyncThunk("contract/removeBet", async ({id}) => {
         return fetch(`${process.env.REACT_APP_API_URL}/api/bet/delete/${id}/`, {
-            method: "PUT",
+            method: "DELETE",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
                 "Access-Control-Allow-Origin": "*",
