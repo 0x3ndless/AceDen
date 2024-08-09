@@ -90,7 +90,7 @@ export default function ProfileBetCard({ data }) {
         </Avatar>
 
         <Typography sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
-          I bet that the price of <span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{data?.assetType}</span> will be above{' '}
+          I bet that the price of <span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{data?.assetType}</span> will be {data?.creatorPrediction === 'bullish' ? 'above' : 'below'}{' '}
           <span style={{ fontWeight: 'bold' }}>${data?.targetPrice}</span> in the next <span style={{ fontWeight: 'bold' }}>{formatTimeUntil(data?.endTime)}</span>
         </Typography>
 
