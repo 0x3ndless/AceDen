@@ -16,6 +16,7 @@ import ProfileDetailsCard from './user/components/ProfileDetailsCard';
 import { getActiveBetsUser, getCompletedBetsUser } from '../redux/features/contractSlice';
 import SkeletonCard from '../components/SkeletonCard';
 import Label from '../components/Label';
+import ProfileBetList from './user/components/ProfileBetList';
 
 
 
@@ -76,7 +77,7 @@ export default function Profile() {
                   )}
                 </>
                 :
-                <></>
+                <ProfileBetList betList={userBetDataActive && userBetDataActive[0]} />
                 }
               </>
 

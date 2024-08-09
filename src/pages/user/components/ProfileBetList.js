@@ -6,31 +6,27 @@ import ProfileBetCard from './ProfileBetCard';
 
 
 export default function ProfileBetList({betList}) {
-
   
   return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }} >
     <Box
       sx={{
         display: 'grid',
-        gap: 3,
         gridTemplateColumns: {
-          xs: 'repeat(2, 1fr)',
-          sm: 'repeat(3, 1fr)',
-          md: 'repeat(3, 1fr)',
-          lg: 'repeat(4, 1fr)',
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(2, 1fr)',
+          lg: 'repeat(2, 1fr)',
         },
+        gap: 5, 
+        justifyItems: 'center', 
       }}
     >
-      <>
-          {betList && betList.length > 0 && 
-            <>
-            {betList && betList.map((item) => (     
-                <ProfileBetCard key={item._id} data={item}/>
-                )
-            )}
-            </>
-          }
-      </>
+      {betList && betList.length > 0 && 
+        betList.map((item) => (
+          <ProfileBetCard key={item._id} data={item} />
+        ))}
     </Box>
+  </Box>
   );
 }

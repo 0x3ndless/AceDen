@@ -187,6 +187,7 @@ const BetForm = () => {
   
     const targetPrice = Number(formData.target_price + '00000000');
     const betEndsInSeconds = dateToSeconds(betEnds)
+    const joinUntilInSeconds = dateToSeconds(joinUntil);
     const prediction = predictionType === 'bullish' ? 0 : 1;
     const assetType = selectedCrypto === 'btc' ? 0 : selectedCrypto === 'eth' ? 1 : 2;
     const betAmount = Number(formData.bet_amount);
@@ -209,6 +210,7 @@ const BetForm = () => {
       bet_amount: Number(formData.bet_amount),
       targetPrice: Number(formData.target_price),
       endTime: betEndsInSeconds,
+      joinUntill: joinUntilInSeconds,
       creatorPrediction: predictionType,
       assetType: selectedCrypto,
     };
