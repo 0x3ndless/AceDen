@@ -120,7 +120,7 @@ export const getBetById = createAsyncThunk("contract/getBetById", async ({id}) =
                 bet_amount: betData.bet_amount,
                 targetPrice: betData.targetPrice,
                 endTime: betData.endTime,
-                joinUntill: betData.joinUntill,
+                joinUntil: betData.joinUntil,
                 creatorPrediction: betData.creatorPrediction,
                 assetType: betData.assetType,
             })
