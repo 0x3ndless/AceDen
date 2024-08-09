@@ -3,17 +3,18 @@ import { useRef } from 'react';
 import Slider from 'react-slick';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, Card, Container, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Container, Typography, Link, Divider, Grid, Tooltip } from '@mui/material';
 // components
 import { MotionViewport, varFade } from '../../../components/animate';
 import { CarouselArrows } from '../../../components/carousel';
 import useResponsive from '../../../hooks/useResponsive';
+import Iconify from '../../../components/Iconify';
 // ----------------------------------------------------------------------
 
 const AceDenCards = [
   {
     id: 1,
-    name: 'I bet 0.1ETH, the Price of ETH will be above $2100 in next 10 hours',
+    name: 'I bet that the price of ETH will be above $2500 in the next 10 hours',
   },
 ]
 
@@ -95,14 +96,74 @@ export default function BetsSectionCard() {
 
 // ----------------------------------------------------------------------
 
-function FeatureCard({item}) {
+function FeatureCard() {
 
   return (
-    <Card key={item.id} sx={{ p: 1, position: 'relative' }}>
-    <Typography variant="subtitle1" sx={{ mt: 2, mb: 2 }}>
-      {item.name}
-    </Typography>
-    <Button variant='outlined' sx={{mb: 2}}>Oppose this Bet</Button>
-  </Card>
+    <Card
+      key={1}
+      sx={{
+        boxShadow: 3,
+        p: 2,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '300px', // Set a fixed width for layout consistency
+      }}
+    >
+      <Avatar
+        sx={{
+          border: '0.5px dotted',
+          borderColor: 'text.secondary',
+          background: 'transparent',
+          width: 56,
+          height: 56,
+        }}
+      >
+        <Iconify icon={'flat-color-icons:bullish'} width={40} height={40} />
+      </Avatar>
+    
+      <Typography variant="subtitle2" sx={{ mt: 2, textAlign: 'center' }}>
+      <Tooltip title="Creator" placement="right">
+        <Link
+          href={`https://sepolia.basescan.org/address`}
+          target="_blank"
+          rel="noopener"
+          style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }}
+        >
+          0x3a...2H3J <Iconify icon={'majesticons:open'} sx={{ verticalAlign: 'middle', ml: 0 }} />
+        </Link>
+        </Tooltip>
+      </Typography>
+      
+      <Typography sx={{ mt: 1, mb: 2, textAlign: 'center' }}>
+        I bet that the price of <span style={{ fontWeight: 'bold' }}>ETH</span> will be above{' '}
+        <span style={{ fontWeight: 'bold' }}>$2500</span> in the next <span style={{ fontWeight: 'bold' }}>10 hours</span>
+      </Typography>
+
+      <Divider sx={{ width: '100%', mb: 2 }} />
+
+      <Grid container sx={{ width: '100%', mb: 2 }}>
+        <Grid item xs={6} sx={{ textAlign: 'left' }}>
+          <Typography variant="subtitle1" >
+            Bet Amount
+          </Typography>
+          <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', mt: 0.5, }} > <Iconify icon={'cryptocurrency-color:eth'} height={16} width={16} sx={{ mr: 0.5 }} /> 0.01 ETH </Typography>
+        </Grid>
+        <Grid item xs={6} sx={{ textAlign: 'right' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            Join Until
+          </Typography>
+          <Typography variant="subtitle2" sx={{ mt: 0.5, }}>10 hours</Typography>
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ width: '100%', mb: 2 }} />
+
+      <Button startIcon={<Iconify icon="streamline-emojis:thumbs-down-2" />} variant="outlined" sx={{ mb: 2 }}>
+        Oppose this Bet
+      </Button>
+    </Card>
   );
 }
