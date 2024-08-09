@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import Slider from 'react-slick';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Box, Button, Card, Container, Typography, Link, Divider, Grid, Tooltip } from '@mui/material';
+import { Avatar, Box, Button, Card, Container, Typography, Link, Divider, Grid, Tooltip, IconButton } from '@mui/material';
 // components
 import { MotionViewport, varFade } from '../../../components/animate';
 import { CarouselArrows } from '../../../components/carousel';
@@ -112,6 +112,20 @@ function FeatureCard() {
         width: '300px', // Set a fixed width for layout consistency
       }}
     >
+
+       <Tooltip title="Bullish" placement="right">
+        <div style={{ position: 'absolute', top: 8, right: 8 }}>
+          <IconButton
+            sx={{
+              pointerEvents: 'none',
+              color: 'text.secondary',
+            }}
+          >
+            <Iconify icon="flat-color-icons:bullish" width={20} height={20} />
+          </IconButton>
+        </div>
+      </Tooltip>
+
       <Avatar
         sx={{
           border: '0.5px dotted',
@@ -121,7 +135,7 @@ function FeatureCard() {
           height: 56,
         }}
       >
-        <Iconify icon={'flat-color-icons:bullish'} width={40} height={40} />
+        <Iconify icon={'cryptocurrency-color:eth'} width={40} height={40} />
       </Avatar>
     
       <Typography variant="subtitle2" sx={{ mt: 2, textAlign: 'center' }}>

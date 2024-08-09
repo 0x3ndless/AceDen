@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Iconify from '../../components/Iconify';
-import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography, Link, Dialog, DialogContent, DialogContentText } from '@mui/material';
+import Label from '../../components/Label';
+import { Box, Button, Card, Divider, Grid, InputAdornment, InputLabel, MenuItem, FormControl, Select, Stack, TextField, Typography, Link, Dialog, DialogContent, DialogContentText, Avatar } from '@mui/material';
 import { MobileDateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 //Redux
 import { useDispatch } from 'react-redux';
-import { createBet } from "../../redux/features/contractSlice";
+import { createBet, getUserData } from "../../redux/features/contractSlice";
 //ABIS smart contract
 import AceDenABIS from '../../abis/AceDen.json';
 //-----------------------Lottie
@@ -80,9 +81,10 @@ const BetForm = () => {
   const [formData, setFormData] = useState({ target_price: '', bet_amount: '' });
   const [, setOpen] = useState(false);
   const [openMessage, setOpenMessage] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
   const [message, setMessage] = useState(`Please, sign the transaction...`);
   const [transaction, setTransaction] = useState('');
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(10);
   const [predictionType, setPredictionType] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState(''); // State for selected cryptocurrency
   const [cryptoPrice, setCryptoPrice] = useState('Loading...'); // State for storing current price
@@ -101,6 +103,40 @@ const BetForm = () => {
     return date ? Math.floor(date.getTime() / 1000) : null;
   };
 
+  function timeUntil(targetDateStr) {
+    // Get the current date and time
+    const now = new Date();
+
+    // Create a Date object for the target date
+    const targetDate = new Date(targetDateStr);
+
+    // Calculate the difference in milliseconds
+    const differenceInMillis = targetDate - now;
+
+    // Convert milliseconds to total minutes
+    const totalMinutes = Math.floor(differenceInMillis / (1000 * 60));
+
+    // Calculate days, hours, and remaining minutes
+    const days = Math.floor(totalMinutes / (24 * 60));
+    const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+    const minutes = totalMinutes % 60;
+
+    return { days, hours, minutes };
+  }
+
+  function formatTimeUntil(targetDateStr) {
+    const { days, hours, minutes } = timeUntil(targetDateStr);
+
+    const dayStr = days > 0 ? `${days} ${days === 1 ? 'day' : 'days'}` : '';
+    const hourStr = hours > 0 ? `${hours} ${hours === 1 ? 'hour' : 'hours'}` : '';
+    const minuteStr = minutes > 0 ? `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : '';
+
+    // Combine parts with commas, excluding any empty parts
+    const parts = [dayStr, hourStr, minuteStr].filter(part => part !== '').join(' & ');
+
+    return parts || 'less than a minute'; // Fallback in case all parts are zero
+}
+
   // Handle bet end date/time change
   const handleBetEndsChange = (newValue) => {
     setBetEnds(newValue);
@@ -116,6 +152,14 @@ const BetForm = () => {
     }
   };
 
+  //handle Preview
+  const handleClickOpenPreview = () => {
+    setOpenPreview(true);
+  }
+
+  const handleClickClosePreview = () => {
+    setOpenPreview(false);
+  }
 
   //handle state change
   const handleStateChange = () => {
@@ -134,6 +178,7 @@ const BetForm = () => {
 
     try {
 
+    setOpenPreview(false);
     setOpenMessage(true);
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -145,7 +190,7 @@ const BetForm = () => {
     const prediction = predictionType === 'bullish' ? 0 : 1;
     const assetType = selectedCrypto === 'btc' ? 0 : selectedCrypto === 'eth' ? 1 : 2;
     const betAmount = Number(formData.bet_amount);
-    const betAmountInWei = betAmount * 1e18;
+    const betAmountInWei = ethers.utils.parseEther(betAmount.toString());
 
     setMessage('Please, sign the transaction...');
   
@@ -170,19 +215,20 @@ const BetForm = () => {
   
     setMessage('Almost done...');
     await dispatch(createBet({ betData }));
+    await dispatch(getUserData());
     setTransaction(receipt.transactionHash);
     setMessage('Bet created successfully!!');
   
     const intervalId = setInterval(() => {
       setCount((prevCountdown) => prevCountdown - 1);
-    }, 500);
+    }, 1000);
   
     handleStateChange();
     setTimeout(() => {
       clearInterval(intervalId);
       setOpenMessage(false);
       navigate('/profile');
-    }, count * 500);
+    }, count * 1000);
 
   } catch (error) {
     console.error("Error during creating a bet:", error);
@@ -240,8 +286,65 @@ const BetForm = () => {
         </DialogContent>
       </Dialog>
 
+
+      <Dialog
+        open={openPreview}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        onClose={handleClickClosePreview}
+      >
+        <DialogContent sx={{ p: 4, textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
+
+      <Typography variant='h5' sx={{ mb: 1, textAlign: 'center' }}>
+        Preview
+      </Typography>
+
+      <Divider sx={{ width: '100%', mb: 2 }} />
+         
+      <Avatar sx={{ border: '0.5px dotted', borderColor: 'text.secondary', background: 'transparent', width: 56, height: 56, }} >
+        <Iconify icon={selectedCrypto === 'btc' ? 'cryptocurrency-color:btc' : selectedCrypto === 'eth' ? 'cryptocurrency-color:eth' : selectedCrypto === 'sol' ? 'cryptocurrency-color:sol' : null} width={40} height={40} />
+      </Avatar>
+      
+      <Typography sx={{ mt: 2, mb: 1, textAlign: 'center' }}>
+          I bet that the price of <span style={{ fontWeight: 'bold' }}>{selectedCrypto.toUpperCase()}</span> will be above{' '}
+          <span style={{ fontWeight: 'bold' }}>${formData.target_price}</span> in the next <span style={{ fontWeight: 'bold' }}>{formatTimeUntil(betEnds)}</span>
+      </Typography>
+
+      <Typography variant='subtitle2' sx={{ mb: 2, textAlign: 'center' }}>
+        <Label color='success'>
+        Current Price: {cryptoPrice}
+        </Label>
+      </Typography>
+
+      <Divider sx={{ width: '100%', mb: 2 }} />
+
+      <Grid container sx={{ width: '100%', mb: 2 }}>
+        <Grid item xs={6} sx={{ textAlign: 'left' }}>
+          <Typography variant="subtitle1" >
+            Bet Amount
+          </Typography>
+          <Typography variant="subtitle1" sx={{ display: 'flex', alignItems: 'center', mt: 0.5, }} > <Iconify icon={'cryptocurrency-color:eth'} height={20} width={20} sx={{ mr: 0.5 }} /> {formData.bet_amount} ETH </Typography>
+        </Grid>
+        <Grid item xs={6} sx={{ textAlign: 'right' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            Ends In
+          </Typography>
+          <Typography variant="subtitle1" sx={{ mt: 0.5, }}>{formatTimeUntil(betEnds)}  </Typography>
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ width: '100%', mb: 2 }} />
+
+      <Button onClick={handleCreateBet} variant="contained" size='large' disabled={openMessage === true ? true : false}> 
+        Create Bet 
+      </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <form onSubmit={handleCreateBet}>
+      <form>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <Card sx={{ p: 3 }}>
@@ -396,12 +499,12 @@ const BetForm = () => {
 
               <Stack spacing={3} alignItems="center">
                 <Button
-                  type="submit"
+                  onClick={handleClickOpenPreview}
                   variant="contained"
                   size='large'
-                  disabled={openMessage === true ? true : false}
+                  disabled={openPreview || openMessage || formData.target_price === '' || (formData.bet_amount === '' || Number(formData.bet_amount) === 0)  || predictionType === '' || selectedCrypto === '' || betEnds == null || joinUntil == null}
                 >
-                  Create Bet
+                  Preview
                 </Button>
               </Stack>
             </Card>
