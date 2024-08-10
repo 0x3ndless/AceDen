@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 // @mui
-import { Container, Card, CardContent, Typography, Skeleton, Divider, Avatar, Tooltip, Link, Grid, Button } from '@mui/material';
+import { Container, Card, CardContent, Typography, Skeleton, Divider, Avatar, Tooltip, Link, Grid, Button, Dialog, DialogContent, DialogContentText, Box } from '@mui/material';
 // hooks
 import useSettings from '../hooks/useSettings';
 // components 
 import Page from '../components/Page';
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getBetById } from "../redux/features/contractSlice";
+import { getBetById, updateBet  } from "../redux/features/contractSlice";
 import Iconify from '../components/Iconify';
 import { useAccount } from 'wagmi';
 import Label from '../components/Label';
@@ -19,6 +19,10 @@ import ConnectAuthorize from './authentication/ConnectAuthorize';
 import OpposeBet from './user/components/OpposeBet';
 //ABIS smart contract
 import AceDenABIS from '../abis/AceDen.json';
+//-----------------------Lottie
+import Lottie from 'react-lottie';
+import successAnimation from '../animations/success.json';
+import loadingAnimation from '../animations/loading.json';
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +61,27 @@ const cryptoIds = {
 
 export default function BetDetails() {
 
+  //--------------------------------------------------------------
+
+    // Lottie animation options for the different states
+    const successAnimationOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: successAnimation,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice',
+      },
+    };
+
+    const loadingAnimationOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: loadingAnimation,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid slice',
+      },
+    };
+
   let id = useParams().id;
 
   const isDesktop = useResponsive('up', 'md');
@@ -73,6 +98,13 @@ export default function BetDetails() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [cryptoPrice, setCryptoPrice] = useState('Loading...'); // State for storing current price
   const [betDetailsChain, setBetDetailsChain] = useState(null);
+
+
+  const [openMessage, setOpenMessage] = useState(false);
+  const [message, setMessage] = useState(`Please, sign the transaction...`);
+  const [transaction, setTransaction] = useState('');
+  const [count, setCount] = useState(10);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -157,12 +189,104 @@ export default function BetDetails() {
       }
   }, [betDetails && betDetails[0] && betDetails[0]?.betContent?.betId]); 
 
-  console.log(betDetailsChain && betDetailsChain)
+
+
+    //-------------------------------------------------------------
+    async function handleClaimReward(e) {
+
+      e.preventDefault();
+  
+      try {
+  
+      setOpenMessage(true);
+  
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, AceDenABIS, signer);
+  
+      const betID = betDetails && betDetails[0] && betDetails[0]?.betContent?.betId;
+  
+      setMessage('Please, sign the transaction...');
+    
+      const cancelBetOnChain = await contract.claimReward(betID);
+  
+      setMessage('Claiming reward on the blockchain...');
+    
+      const receipt = await cancelBetOnChain.wait();
+
+      const betData = {
+        isSettled: betDetailsChain?.isSettled,
+        isDraw: betDetailsChain?.isDraw,
+        creatorWins: betDetailsChain?.creatorWins,
+        rewardClaimed: true,
+      }
+      
+      setMessage('Almost done...');
+      await dispatch(updateBet({betData, id}));
+      setTransaction(receipt.transactionHash);
+      setMessage('Reward claimed successfully!!');
+  
+      const intervalId = setInterval(() => {
+          setCount((prevCountdown) => prevCountdown - 1);
+      }, 1000);
+    
+      setTimeout(() => {
+        clearInterval(intervalId);
+        setOpenMessage(false);
+        window.location.reload();
+      }, count * 1000);
+  
+    } catch (error) {
+      console.error("Error during reward claim:", error);
+      setOpenMessage(false);
+    }
+    }
+
+
 
 
   return (
     <Page title="Bet">
       <Container maxWidth={themeStretch ? false : 'lg'}>
+
+
+      <Dialog
+        open={openMessage}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{ sx: { width: 330 } }} 
+      >
+        <DialogContent sx={{ p: 4, textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center' }}>
+            {message === 'Reward claimed successfully!!' ? (
+              <>
+                <Lottie options={successAnimationOptions} height={100} width={100} />
+                <Typography variant="h6" sx={{mt: 1}}>Claimed successfully!!</Typography>
+              </>
+            ) :  (
+              <>
+                <Lottie options={loadingAnimationOptions} height={100} width={100} />
+                <Typography variant="h6" sx={{mt: 1}}>Claiming (Do not close)</Typography>
+              </>
+            )}
+          </Box>
+
+          <DialogContentText id="alert-dialog-description">
+            {message === 'Reward claimed successfully!!' ? `Pop-up will close in ${count} seconds` : message}
+            {message === 'Reward claimed successfully!!' &&
+            <>
+            <br></br>
+            <Link href={`https://sepolia.basescan.org/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
+            </>
+            }
+          </DialogContentText>
+
+        </DialogContent>
+      </Dialog>
+
+
+
+
         {(loadingBetDetails || betDetails === null) ? (
           <Card>
             <CardContent>
@@ -188,7 +312,7 @@ export default function BetDetails() {
             <Typography sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
             <Tooltip title="Creator" placement="left">
                 <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
-                    <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
+                    <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
                 </Link>
             </Tooltip> 
                 &nbsp;bets that the price of <span style={{ fontWeight: 'bold' }}>{betDetails && betDetails[0] && betDetails[0]?.betContent?.assetType.toUpperCase()}</span> will be {betDetails && betDetails[0] && betDetails[0]?.betContent?.creatorPrediction === 'bullish' ? 'above' : 'below'}{' '}
@@ -220,6 +344,11 @@ export default function BetDetails() {
 
             <Divider sx={{ width: '100%', mb: 2 }} />
 
+
+            {betDetailsChain?.isSettled ? null :
+
+              <>
+
                 {!accessTokenExists && isConnected ? 
                     <ConnectAuthorize /> : !accessTokenExists || (!isConnected) ? <Connect /> 
                     : isConnected && accessTokenExists ?
@@ -237,7 +366,7 @@ export default function BetDetails() {
                         </Typography>
                         <Typography variant="subtitle2" sx={{textAlign: 'center' }}>
                             <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
-                                <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
+                                <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
                             </Link>
                         </Typography>
                         </>
@@ -249,53 +378,104 @@ export default function BetDetails() {
                     </>
                     : null
                 }
+                </>}
 
-      {betDetailsChain?.isSettled ? (
-          betDetailsChain?.rewardClaimed ? (
-            // If the reward is claimed, show the winner information
-            <>
-              {betDetailsChain?.creatorWins ? (
-                betDetails[0]?.betContent?.creator === address ? (
-                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                    You win!
-                  </Typography>
+      
+            {accessTokenExists && isConnected && betDetailsChain?.isSettled ? (
+              address === betDetails[0]?.betContent?.opponent || address === betDetails[0]?.betContent?.creator ? (
+                betDetailsChain?.rewardClaimed ? (
+                  // If the reward is claimed
+                  <>
+                    {betDetailsChain?.creatorWins ? (
+                      betDetails[0]?.betContent?.creator === address ? (
+                        <Typography variant="h5" sx={{ textAlign: "center" }}>
+                          Congratulations, You won!! 🎉
+                        </Typography>
+                      ) : (
+                        <Typography variant="h5" sx={{ textAlign: "center" }}>
+                          Oops, You lost!! 😭
+                        </Typography>
+                      )
+                    ) : betDetails[0]?.betContent?.opponent === address ? (
+                      <Typography variant="h5" sx={{ textAlign: "center" }}>
+                        Congratulations, You won!! 🎉
+                      </Typography>
+                    ) : (
+                      <Typography variant="h5" sx={{ textAlign: "center" }}>
+                        Oops, You lost!! 😭
+                      </Typography>
+                    )}
+                  </>
                 ) : (
-                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                    Won by Creator:{" "}
-                    {`${betDetails[0]?.betContent?.creator.substr(
-                      0,
-                      4
-                    )}...${betDetails[0]?.betContent?.creator.substr(-4)}`}
-                  </Typography>
+                  // If the bet is settled but the reward is not claimed
+                  <>
+                    {betDetailsChain?.creatorWins ? (
+                      betDetails[0]?.betContent?.creator === address ? (
+                        <>
+                          <Typography variant="h5" sx={{ textAlign: "center" }}>
+                            Congratulations, You won!! 🎉
+                          </Typography>
+
+                          <Button
+                            startIcon={<Iconify icon="fluent-emoji-flat:party-popper" />}
+                            variant="outlined"
+                            sx={{ mt: 2 }}
+                            onClick={handleClaimReward}
+                          >
+                            Claim {(betDetails[0]?.betContent?.bet_amount) * 2} ETH
+                          </Button>
+                        </>
+                      ) : (
+                        <Typography variant="h5" sx={{ textAlign: "center" }}>
+                          Oops, You lost!! 😭
+                        </Typography>
+                      )
+                    ) : betDetails[0]?.betContent?.opponent === address ? (
+                      <>
+                        <Typography variant="h5" sx={{ textAlign: "center" }}>
+                          Congratulations, You won!! 🎉
+                        </Typography>
+
+                        <Button
+                          startIcon={<Iconify icon="fluent-emoji-flat:party-popper" />}
+                          variant="outlined"
+                          sx={{ mt: 2 }}
+                          onClick={handleClaimReward}
+                        >
+                          Claim {(betDetails[0]?.betContent?.bet_amount) * 2} ETH
+                        </Button>
+                      </>
+                    ) : (
+                      <Typography variant="h5" sx={{ textAlign: "center" }}>
+                        Oops, You lost!! 😭
+                      </Typography>
+                    )}
+                  </>
                 )
               ) : (
-                betDetails[0]?.betContent?.opponent === address ? (
-                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                    You win!
-                  </Typography>
-                ) : (
-                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                    Won by Opponent:{" "}
-                    {`${betDetails[0]?.betContent?.opponent.substr(
-                      0,
-                      4
-                    )}...${betDetails[0]?.betContent?.opponent.substr(-4)}`}
-                  </Typography>
-                )
-              )}
-        </>
-        ) : (
-          // If the bet is settled but the reward is not claimed, show the claim button
-          <Button
-            startIcon={<Iconify icon="fluent-emoji-flat:party-popper" />}
-            variant="outlined"
-            sx={{ mt: 2 }}
-        
-          >
-            Claim Reward
-          </Button>
-        )
-      ) : null}
+                // For other viewers, show who won the bet
+                <>
+                  {betDetailsChain?.creatorWins ? (
+                    <Typography variant="h6" sx={{ textAlign: "center" }}>
+                      Won by Creator 👑<br></br>
+                      <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                        <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
+                      </Link>
+                    </Typography>
+                  ) : (
+                    <Typography variant="h6" sx={{ textAlign: "center" }}>
+                      Won by Opposer 👑<br></br>
+                      <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                        <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
+                      </Link>
+                    </Typography>
+                  )}
+                </>
+              )
+            ) : null}
+
+
+
 
             </CardContent>
           </Card>

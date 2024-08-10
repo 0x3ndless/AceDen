@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Dialog, DialogContent, DialogContentText, Box, Typography, Link } from '@mui/material';
 import Iconify from '../../../components/Iconify';
 //Redux
@@ -10,12 +10,10 @@ import AceDenABIS from '../../../abis/AceDen.json';
 import Lottie from 'react-lottie';
 import successAnimation from '../../../animations/success.json';
 import loadingAnimation from '../../../animations/loading.json';
+import { useNavigate } from 'react-router';
 
 
 const CancelBetDetails = ({data}) => {
-
-
-    const emptyAddress = '0x0000000000000000000000000000000000000000';
 
     //--------------------------------------------------------------
 
@@ -39,18 +37,14 @@ const CancelBetDetails = ({data}) => {
       };
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const ethers = require("ethers");
 
     const [openMessage, setOpenMessage] = useState(false);
     const [message, setMessage] = useState(`Please, sign the transaction...`);
     const [transaction, setTransaction] = useState('');
     const [count, setCount] = useState(10);
-    const [betDetails, setBetDetails] = useState(null);
 
-    //handle state change
-    const handleStateChange = () => {
-        
-    }
 
     //-------------------------------------------------------------
   async function handleCancelBet(e) {
@@ -84,43 +78,19 @@ const CancelBetDetails = ({data}) => {
         setCount((prevCountdown) => prevCountdown - 1);
     }, 1000);
   
-    handleStateChange();
     setTimeout(() => {
       clearInterval(intervalId);
       setOpenMessage(false);
-      window.location.reload();
+      navigate('/profile')
     }, count * 1000);
 
   } catch (error) {
     console.error("Error during cancelling a bet:", error);
-    handleStateChange();
     setOpenMessage(false);
   }
   }
 
 
-    const fetchBetDetails = async () => {
-        try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
-            const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, AceDenABIS, signer);
-
-            const betID = data?.betId;
-
-            const bet = await contract.bets(betID);
-            setBetDetails(bet);
-        } catch (error) {
-            console.error("Error fetching bet details:", error);
-        }
-    };
-
-
-   // Fetch the bet details
-   useEffect(() => {
-        if (data?.betId) {
-            fetchBetDetails();
-        }
-    }, [data?.betId]); 
 
 
   return (
@@ -160,7 +130,7 @@ const CancelBetDetails = ({data}) => {
         </DialogContent>
       </Dialog>
 
-    {betDetails?.opponent === emptyAddress ? 
+    {data?.opponent === null ? 
         <Button onClick={handleCancelBet} variant="outlined" color='error' sx={{ mb: 2 }} disabled={openMessage === true ? true : false}>
             Cancel Bet
         </Button>
