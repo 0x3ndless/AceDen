@@ -7,7 +7,7 @@ import Slider from 'react-slick';
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Box, Button, Card, Container, Typography, Link, Divider, Grid, Tooltip, IconButton } from '@mui/material';
 // components
-import { MotionViewport, varFade } from '../../../components/animate';
+import { MotionViewport } from '../../../components/animate';
 import { CarouselArrows } from '../../../components/carousel';
 import useResponsive from '../../../hooks/useResponsive';
 import Iconify from '../../../components/Iconify';
@@ -29,7 +29,7 @@ export default function BetsSectionCard() {
   const settings = {
     arrows: false,
     slidesToShow: 3,
-    infinite: false,
+    infinite: true,
     centerPadding: '0px',
     rtl: Boolean(theme.direction === 'rtl'),
     responsive: [
@@ -68,11 +68,11 @@ export default function BetsSectionCard() {
   return (
     <Container component={MotionViewport} sx={{ pb: 10, textAlign: 'center' }}>
 
-      <m.div variants={varFade().inUp}>
+      <m.div>
         <Typography variant="h3" sx={{mb: 2}}>🎰 <span className="title_keyword2">Active Bets</span></Typography>
       </m.div>
 
-      <m.div variants={varFade().inUp}>
+      <m.div>
         <Typography sx={{ mx: 'auto', maxWidth: 630, color: (theme) => (theme.palette.mode === 'light' ? 'text.secondary' : 'common.white'), }} >
         Explore the latest bets and counter with your own speculation!
         </Typography>
@@ -82,27 +82,21 @@ export default function BetsSectionCard() {
       {isDesktop ?
       <CarouselArrows filled onNext={handleNext} onPrevious={handlePrevious}>
           <Slider ref={carouselRef} {...settings}>
-          {allBets && allBets[0] && allBets[0].length > 0 &&
-          <>
-            {allBets[0].map((data) => (
-              <Box key={data.id} component={m.div} variants={varFade().in} sx={{ px: 1.5, mt: 5, mb: 7 }}>
-              <FeatureCard data={data}  />
+            {allBets && allBets[0] && allBets[0].map((data) => (
+              <Box key={data._id} component={m.div} sx={{ px: 1.5, mt: 5, mb: 7 }}>
+                <FeatureCard data={data}  />
               </Box>
-            ))}
-          </>
+            ))
           }
           </Slider>
        </CarouselArrows>
        :
           <Slider ref={carouselRef} {...settings}>
-            {allBets && allBets[0] && allBets[0].length > 0 &&
-          <>
-            {allBets[0].map((data) => (
-              <Box key={data.id} component={m.div} variants={varFade().in} sx={{ px: 1.5, mt: 5 }}>
-              <FeatureCard data={data}  />
+            {allBets && allBets[0] && allBets[0].map((data) => (
+              <Box key={data._id} component={m.div} sx={{ px: 1.5, mt: 5, mb: 7 }}>
+                <FeatureCard data={data}  />
               </Box>
-            ))}
-          </>
+            ))
           }
           </Slider>       
       }
@@ -168,7 +162,7 @@ function FeatureCard({data}) {
 
   return (
     <Card
-      key={1}
+      key={data?._id}
       sx={{
         boxShadow: 3,
         p: 2,
@@ -177,7 +171,6 @@ function FeatureCard({data}) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '300px', // Set a fixed width for layout consistency
       }}
     >
 

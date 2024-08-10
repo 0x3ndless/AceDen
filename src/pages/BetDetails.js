@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ConfettiExplosion from 'react-confetti-explosion';
 // @mui
 import { Container, Card, CardContent, Typography, Skeleton, Divider, Avatar, Tooltip, Link, Grid, Button, Dialog, DialogContent, DialogContentText, Box } from '@mui/material';
 // hooks
@@ -260,6 +261,9 @@ export default function BetDetails() {
           <Box sx={{ textAlign: 'center' }}>
             {message === 'Reward claimed successfully!!' ? (
               <>
+                <div style={{ display: 'flex', justifyContent: 'center'}}>
+                  <ConfettiExplosion zIndex={1500} duration={4200} />
+                </div>  
                 <Lottie options={successAnimationOptions} height={100} width={100} />
                 <Typography variant="h6" sx={{mt: 1}}>Claimed successfully!!</Typography>
               </>
@@ -288,12 +292,8 @@ export default function BetDetails() {
 
 
         {(loadingBetDetails || betDetails === null) ? (
-          <Card>
-            <CardContent>
-              <Skeleton variant="text" height={40} width="80%" />
-              <Skeleton variant="text" height={20} width="60%" />
-              <Skeleton variant="rectangular" height={100} />
-            </CardContent>
+          <Card sx={{width: isDesktop ? '50%' : 'unset', margin: '0 auto', mt: 4}}> 
+            <Skeleton variant="rectangular" width="100%" sx={{ height: 400, borderRadius: 2 }} />
           </Card>
         ) : (
           <Card sx={{boxShadow: 3, width: isDesktop ? '50%' : 'unset', margin: '0 auto', mt: 4}}>

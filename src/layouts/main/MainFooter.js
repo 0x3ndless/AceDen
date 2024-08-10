@@ -12,7 +12,7 @@ const LINKS = [
   {
     headline: 'Ecosystem',
     children: [
-      { name: 'Explore', href: '' },
+      { name: 'Explore', href: '/explore' },
     ],
   }, 
 ];
@@ -74,7 +74,7 @@ export default function MainFooter() {
                       variant="body2"
                       component={RouterLink}
                       sx={{ display: 'block' }}
-                      target="_blank" rel="noopener"
+                      
                       style={{ textDecoration: 'none' }}
                     >
                       {link.name}

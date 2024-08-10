@@ -61,7 +61,6 @@ const ExploreCard = ({data}) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '300px', // Set a fixed width for layout consistency
         }}
       >
   
