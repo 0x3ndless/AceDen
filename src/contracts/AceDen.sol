@@ -178,7 +178,7 @@ contract AceDen {
     function hasUnsettledEndedBets() external view returns (bool) {
         for (uint256 betId = 0; betId < betCount; betId++) {
             Bet storage bet = bets[betId];
-            if (bet.creator != address(0) && !bet.isSettled && block.timestamp >= bet.endTime) {
+            if (bet.creator != address(0) && bet.opponent != address(0) && !bet.isSettled && block.timestamp >= bet.endTime) {
                 return true; 
             }
         }
@@ -189,7 +189,7 @@ contract AceDen {
     function settleAllExpiredBets() external {
         for (uint256 betId = 0; betId < betCount; betId++) {
             Bet storage bet = bets[betId];
-            if (bet.creator != address(0) && !bet.isSettled && block.timestamp >= bet.endTime) {
+            if (bet.creator != address(0) && bet.opponent != address(0) && !bet.isSettled && block.timestamp >= bet.endTime) {
                 settleBet(betId);
             }
         }
