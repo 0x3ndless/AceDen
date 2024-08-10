@@ -151,9 +151,9 @@ function FeatureCard({data}) {
       return 'Expired';
     }
 
-    const dayStr = days > 0 ? `${days} ${days === 1 ? 'day' : 'days'}` : '';
-    const hourStr = hours > 0 ? `${hours} ${hours === 1 ? 'hour' : 'hours'}` : '';
-    const minuteStr = minutes > 0 ? `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : '';
+    const dayStr = days > 0 ? `${days} ${days === 1 ? 'd' : 'ds'}` : '';
+    const hourStr = hours > 0 ? `${hours} ${hours === 1 ? 'hr' : 'hrs'}` : '';
+    const minuteStr = minutes > 0 ? `${minutes} ${minutes === 1 ? 'min' : 'mins'}` : '';
     const parts = [dayStr, hourStr, minuteStr].filter(part => part !== '').join(' & ');
 
     return parts || 'less than a minute';
