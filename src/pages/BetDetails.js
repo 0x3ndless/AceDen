@@ -16,6 +16,7 @@ import CancelBetDetails from './user/components/CancelBetDetails';
 import useResponsive from '../hooks/useResponsive';
 import Connect from './authentication/Connect';
 import ConnectAuthorize from './authentication/ConnectAuthorize';
+import OpposeBet from './user/components/OpposeBet';
 
 // ----------------------------------------------------------------------
 
@@ -196,9 +197,7 @@ export default function BetDetails() {
                     {betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address ? 
                       <CancelBetDetails data={betDetails && betDetails[0] && betDetails[0]?.betContent} />
                       :
-                    <Button startIcon={<Iconify icon="streamline-emojis:thumbs-down-2" />} variant="outlined" sx={{ mb: 2 }}>
-                        Oppose this Bet
-                    </Button>
+                      <OpposeBet data={betDetails && betDetails[0] && betDetails[0]?.betContent} />
                     }
                     </>
                     : null
