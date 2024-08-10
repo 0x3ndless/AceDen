@@ -186,7 +186,9 @@ const BetForm = () => {
     const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, AceDenABIS, signer);
   
     const targetPrice = Number(formData.target_price + '00000000');
-    const betEndsInSeconds = dateToSeconds(betEnds)
+    const currentTimeInSeconds = dateToSeconds(new Date());
+    const betEndsInTime = dateToSeconds(betEnds);
+    const betEndsInSeconds = betEndsInTime - currentTimeInSeconds;
     const prediction = predictionType === 'bullish' ? 0 : 1;
     const assetType = selectedCrypto === 'btc' ? 0 : selectedCrypto === 'eth' ? 1 : 2;
     const betAmount = Number(formData.bet_amount);
