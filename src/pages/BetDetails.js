@@ -17,6 +17,8 @@ import useResponsive from '../hooks/useResponsive';
 import Connect from './authentication/Connect';
 import ConnectAuthorize from './authentication/ConnectAuthorize';
 import OpposeBet from './user/components/OpposeBet';
+//ABIS smart contract
+import AceDenABIS from '../abis/AceDen.json';
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +63,7 @@ export default function BetDetails() {
 
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
+  const ethers = require("ethers");
   const { loadingBetDetails, betDetails } = useSelector((state) => ({...state.app}));
 
 
@@ -69,6 +72,7 @@ export default function BetDetails() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [cryptoPrice, setCryptoPrice] = useState('Loading...'); // State for storing current price
+  const [betDetailsChain, setBetDetailsChain] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -130,6 +134,32 @@ export default function BetDetails() {
   }, []);
 
 
+  const fetchBetDetails = async () => {
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, AceDenABIS, signer);
+
+        const betID = betDetails && betDetails[0] && betDetails[0]?.betContent?.betId;
+
+        const bet = await contract.bets(betID);
+        setBetDetailsChain(bet);
+    } catch (error) {
+        console.error("Error fetching bet details:", error);
+    }
+  };
+
+
+  // Fetch the bet details
+  useEffect(() => {
+      if (betDetails && betDetails[0] && betDetails[0]?.betContent?.betId) {
+          fetchBetDetails();
+      }
+  }, [betDetails && betDetails[0] && betDetails[0]?.betContent?.betId]); 
+
+  console.log(betDetailsChain && betDetailsChain)
+
+
   return (
     <Page title="Bet">
       <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -161,7 +191,7 @@ export default function BetDetails() {
                     <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
                 </Link>
             </Tooltip> 
-                &nbsp;bets that the price of <span style={{ fontWeight: 'bold' }}>{betDetails && betDetails[0] && betDetails[0]?.betContent?.assetType.toUpperCase()}</span> will be above{' '}
+                &nbsp;bets that the price of <span style={{ fontWeight: 'bold' }}>{betDetails && betDetails[0] && betDetails[0]?.betContent?.assetType.toUpperCase()}</span> will be {betDetails && betDetails[0] && betDetails[0]?.betContent?.creatorPrediction === 'bullish' ? 'above' : 'below'}{' '}
                 <span style={{ fontWeight: 'bold' }}>${betDetails && betDetails[0] && betDetails[0]?.betContent?.targetPrice}</span> in the next <span style={{ fontWeight: 'bold' }}>{formatTimeUntil(betDetails && betDetails[0] && betDetails[0]?.betContent?.endTime)}</span>
             </Typography>
 
@@ -219,6 +249,53 @@ export default function BetDetails() {
                     </>
                     : null
                 }
+
+{betDetailsChain?.isSettled ? (
+      betDetailsChain?.rewardClaimed ? (
+        // If the reward is claimed, show the winner information
+        <>
+          {betDetailsChain?.creatorWins ? (
+            betDetails[0]?.betContent?.creator === address ? (
+              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                You win!
+              </Typography>
+            ) : (
+              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                Won by Creator:{" "}
+                {`${betDetails[0]?.betContent?.creator.substr(
+                  0,
+                  4
+                )}...${betDetails[0]?.betContent?.creator.substr(-4)}`}
+              </Typography>
+            )
+          ) : (
+            betDetails[0]?.betContent?.opponent === address ? (
+              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                You win!
+              </Typography>
+            ) : (
+              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                Won by Opponent:{" "}
+                {`${betDetails[0]?.betContent?.opponent.substr(
+                  0,
+                  4
+                )}...${betDetails[0]?.betContent?.opponent.substr(-4)}`}
+              </Typography>
+            )
+          )}
+        </>
+        ) : (
+          // If the bet is settled but the reward is not claimed, show the claim button
+          <Button
+            startIcon={<Iconify icon="fluent-emoji-flat:party-popper" />}
+            variant="outlined"
+            sx={{ mt: 2 }}
+        
+          >
+            Claim Reward
+          </Button>
+        )
+      ) : null}
 
             </CardContent>
           </Card>

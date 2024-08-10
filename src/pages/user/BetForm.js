@@ -307,7 +307,7 @@ const BetForm = () => {
       </Avatar>
       
       <Typography sx={{ mt: 2, mb: 1, textAlign: 'center' }}>
-          I bet that the price of <span style={{ fontWeight: 'bold' }}>{selectedCrypto.toUpperCase()}</span> will be above{' '}
+          I bet that the price of <span style={{ fontWeight: 'bold' }}>{selectedCrypto.toUpperCase()}</span> will be {predictionType === 'bullish' ? 'above' : 'below'}{' '}
           <span style={{ fontWeight: 'bold' }}>${formData.target_price}</span> in the next <span style={{ fontWeight: 'bold' }}>{formatTimeUntil(betEnds)}</span>
       </Typography>
 
