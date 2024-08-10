@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Button, Dialog, DialogContent, DialogContentText, Box, Typography, Link } from '@mui/material';
 import Iconify from '../../../components/Iconify';
 //Redux
@@ -164,7 +165,11 @@ const CancelBet = ({data}) => {
         <Button onClick={handleCancelBet} variant="outlined" color='error' sx={{ mb: 2 }} disabled={openMessage === true ? true : false}>
             Cancel Bet
         </Button>
-    : null}
+    : 
+      <Button component={RouterLink} to={`/bet/${betDetails?._id}`} variant="outlined" sx={{ mb: 2 }}>
+        View Details
+      </Button>
+      }
     
     </>
   )
