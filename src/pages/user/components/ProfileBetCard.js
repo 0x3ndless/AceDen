@@ -109,7 +109,7 @@ export default function ProfileBetCard({ data }) {
             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
               Join Until
             </Typography>
-            <Typography variant="subtitle2" sx={{ mt: 0.5, }}>{formatTimeUntil(data?.joinUntil)}</Typography>
+            <Typography variant="subtitle2" sx={{ mt: 0.5, }}>{data && data?.opponent !== null ? '🔒' :formatTimeUntil(data?.joinUntil)}</Typography>
           </Grid>
         </Grid>
 

@@ -13,7 +13,7 @@ import EmptyContent from '../components/EmptyContent';
 import { useSelector, useDispatch } from 'react-redux';
 // profile scomponent
 import ProfileDetailsCard from './user/components/ProfileDetailsCard';
-import { getActiveBetsUser, getCompletedBetsUser } from '../redux/features/contractSlice';
+import { getActiveBetsUser, getCompletedBetsUser, getOpposedBetsUser } from '../redux/features/contractSlice';
 import SkeletonCard from '../components/SkeletonCard';
 import Label from '../components/Label';
 import ProfileBetList from './user/components/ProfileBetList';
@@ -27,7 +27,7 @@ export default function Profile() {
   const { themeStretch } = useSettings();
 
   const dispatch = useDispatch();
-  const { userData, userBetDataActive, loadingUserBet, userBetDataCompleted } = useSelector((state) => ({...state.app}));
+  const { userData, userBetDataActive, loadingUserBet, userBetDataCompleted, userBetDataOpposed } = useSelector((state) => ({...state.app}));
 
   const [value, setValue] = useState('1');
 
@@ -38,6 +38,7 @@ export default function Profile() {
   const fetchData = () => {
     dispatch(getActiveBetsUser());
     dispatch(getCompletedBetsUser());
+    dispatch(getOpposedBetsUser());
   }
 
   useEffect(() => {
@@ -61,7 +62,8 @@ export default function Profile() {
           <TabContext value={value}>
             <TabList onChange={handleChange} sx={{ position: 'relative', '& .MuiTabs-indicator': { display: 'none' }  }} allowScrollButtonsMobile variant="scrollable" scrollButtons="auto" >
               <Tab disableRipple label={ <Chip label={<span>Active {userBetDataActive && userBetDataActive[0]?.length > 0 ? <>&nbsp;{<Label color={"info"}>{userBetDataActive[0]?.length}</Label>}</> : <>{<Label color={"info"}>0</Label>}</>}</span>} variant='outlined' clickable sx={ value === '1' ? {color: '#2065D1', borderColor: '#2065D1'} : {} } /> } value="1"  />
-              <Tab disableRipple label={ <Chip label={<span>Completed {userBetDataCompleted && userBetDataCompleted[0]?.length > 0 ? <>&nbsp;{<Label color={"info"}>{userBetDataCompleted[0]?.length}</Label>}</> : <>{<Label color={"info"}>0</Label>}</>}</span>} variant='outlined' clickable sx={ value === '2' ? {color: '#2065D1', borderColor: '#2065D1'} : {} } /> } value="2"  sx={{ minWidth: 0, ml: -3.5 }} />
+              <Tab disableRipple label={ <Chip label={<span>Opposed {userBetDataOpposed && userBetDataOpposed[0]?.length > 0 ? <>&nbsp;{<Label color={"info"}>{userBetDataOpposed[0]?.length}</Label>}</> : <>{<Label color={"info"}>0</Label>}</>}</span>} variant='outlined' clickable sx={ value === '2' ? {color: '#2065D1', borderColor: '#2065D1'} : {} } /> } value="2"  sx={{ minWidth: 0, ml: -3.5 }} />
+              <Tab disableRipple label={ <Chip label={<span>Completed {userBetDataCompleted && userBetDataCompleted[0]?.length > 0 ? <>&nbsp;{<Label color={"info"}>{userBetDataCompleted[0]?.length}</Label>}</> : <>{<Label color={"info"}>0</Label>}</>}</span>} variant='outlined' clickable sx={ value === '3' ? {color: '#2065D1', borderColor: '#2065D1'} : {} } /> } value="3"  sx={{ minWidth: 0, ml: -3.5 }} />
             </TabList>
 
           <Divider sx={{mb: 2, mt: 0.5}} />
@@ -95,6 +97,33 @@ export default function Profile() {
           </TabPanel>
 
           <TabPanel value="2">
+          {userBetDataOpposed && userBetDataOpposed[0] && userBetDataOpposed[0].length > 0 ? 
+              <>
+                {loadingUserBet ? 
+                <>
+                  {[...Array(12)].map((i, index) => 
+                    <SkeletonCard key={index}/>
+                  )}
+                </>
+                :
+                <ProfileBetList betList={userBetDataOpposed && userBetDataOpposed[0]} />
+                }
+              </>
+
+               :  
+               
+              <Card>
+              <EmptyContent
+                      title="It's empty!"
+                      description={`Give it some life by opposing a bet!`}
+                      sx={{
+                        '& span.MuiBox-root': { height: 160 },
+              }}/>
+              </Card>
+              }
+          </TabPanel>
+
+          <TabPanel value="3">
           {userBetDataCompleted && userBetDataCompleted[0] && userBetDataCompleted[0].length > 0 ? 
               <>
                 {loadingUserBet ? 
@@ -104,7 +133,7 @@ export default function Profile() {
                   )}
                 </>
                 :
-                <></>
+                <ProfileBetList betList={userBetDataCompleted && userBetDataCompleted[0]} />
                 }
               </>
 

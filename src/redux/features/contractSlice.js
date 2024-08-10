@@ -54,6 +54,20 @@ export const getCompletedBetsUser = createAsyncThunk("contract/getCompletedBetsU
     );
 })
 
+//Get opposed bets by the user
+export const getOpposedBetsUser = createAsyncThunk("contract/getOpposedBetsUser", async () => {
+    return fetch(`${process.env.REACT_APP_API_URL}/api/bet/me/opposed`, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+            'Authorization': `Bearer ${access_token.token}`,
+        },
+    }).then((res) => 
+    res.json()
+    );
+})
+
 
 
 //------------------------------------Leaderboard ------------------------------------------
@@ -193,6 +207,7 @@ const contractSlice = createSlice({
         userData: [], //user details 
         userBetDataActive: [],
         userBetDataCompleted: [],
+        userBetDataOpposed: [],
         loading: false,
         loadingUser: false,
         loadingUserBet: false,
@@ -260,6 +275,19 @@ const contractSlice = createSlice({
             state.userBetDataCompleted = [action.payload];
         },
         [getCompletedBetsUser.rejected]: (state, action) => {
+            state.loadingUserBet = false;
+            state.error = action.payload;
+        },
+
+        //get opposed bet by user
+        [getOpposedBetsUser.pending]: (state, action) => {
+            state.loadingUserBet = true;
+        },
+        [getOpposedBetsUser.fulfilled]: (state, action) => {
+            state.loadingUserBet = false;
+            state.userBetDataOpposed = [action.payload];
+        },
+        [getOpposedBetsUser.rejected]: (state, action) => {
             state.loadingUserBet = false;
             state.error = action.payload;
         },

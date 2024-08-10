@@ -184,7 +184,7 @@ export default function BetDetails() {
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                     Join Until
                 </Typography>
-                <Typography variant="subtitle1" sx={{ mt: 0.5, }}>{formatTimeUntil(betDetails && betDetails[0] && betDetails[0]?.betContent?.joinUntil)}  </Typography>
+                <Typography variant="subtitle1" sx={{ mt: 0.5, }}>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent !== null ? '🔒' : formatTimeUntil(betDetails && betDetails[0] && betDetails[0]?.betContent?.joinUntil)}  </Typography>
                 </Grid>
             </Grid>
 
@@ -194,10 +194,27 @@ export default function BetDetails() {
                     <ConnectAuthorize /> : !accessTokenExists || (!isConnected) ? <Connect /> 
                     : isConnected && accessTokenExists ?
                     <>
-                    {betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address ? 
+                    {betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && betDetails[0]?.betContent?.opponent === null  ? 
                       <CancelBetDetails data={betDetails && betDetails[0] && betDetails[0]?.betContent} />
                       :
-                      <OpposeBet data={betDetails && betDetails[0] && betDetails[0]?.betContent} />
+                      <>
+                      {betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === null ?
+                        <OpposeBet data={betDetails && betDetails[0] && betDetails[0]?.betContent} />
+                        : betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent !== null ?
+                        <>
+                        <Typography variant="subtitle1" sx={{textAlign: 'center'}}>
+                          Opposed By
+                        </Typography>
+                        <Typography variant="subtitle2" sx={{textAlign: 'center' }}>
+                            <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                                <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
+                            </Link>
+                        </Typography>
+                        </>
+                        :
+                        null
+                      }
+                      </>
                     }
                     </>
                     : null

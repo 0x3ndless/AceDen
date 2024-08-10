@@ -121,15 +121,19 @@ const ExploreCard = ({data}) => {
             <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
               Join Until
             </Typography>
-            <Typography variant="subtitle2" sx={{ mt: 0.5, }}>{formatTimeUntil(data?.joinUntil)}</Typography>
+            <Typography variant="subtitle2" sx={{ mt: 0.5, }}>{data && data?.opponent !== null ? '🔒' : formatTimeUntil(data?.joinUntil)}</Typography>
           </Grid>
         </Grid>
   
         <Divider sx={{ width: '100%', mb: 2 }} />
-  
-          {data?.creator === address ? 
+
+          {data?.creator === address && data?.opponent === null ? 
             <Button component={RouterLink} to={`/bet/${data?._id}`} variant="outlined" sx={{ mb: 2 }}>
               Bet Details
+            </Button>
+            : data?.opponent !== null ?
+            <Button component={RouterLink} to={`/bet/${data?._id}`} startIcon={<Iconify icon="majesticons:open-line" />} variant="outlined" sx={{ mb: 2 }}>
+              Opposed
             </Button>
             :
             <Button component={RouterLink} to={`/bet/${data?._id}`} startIcon={<Iconify icon="streamline-emojis:thumbs-down-2" />} variant="outlined" sx={{ mb: 2 }}>
