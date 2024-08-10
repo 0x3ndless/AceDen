@@ -250,39 +250,39 @@ export default function BetDetails() {
                     : null
                 }
 
-{betDetailsChain?.isSettled ? (
-      betDetailsChain?.rewardClaimed ? (
-        // If the reward is claimed, show the winner information
-        <>
-          {betDetailsChain?.creatorWins ? (
-            betDetails[0]?.betContent?.creator === address ? (
-              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                You win!
-              </Typography>
-            ) : (
-              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                Won by Creator:{" "}
-                {`${betDetails[0]?.betContent?.creator.substr(
-                  0,
-                  4
-                )}...${betDetails[0]?.betContent?.creator.substr(-4)}`}
-              </Typography>
-            )
-          ) : (
-            betDetails[0]?.betContent?.opponent === address ? (
-              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                You win!
-              </Typography>
-            ) : (
-              <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-                Won by Opponent:{" "}
-                {`${betDetails[0]?.betContent?.opponent.substr(
-                  0,
-                  4
-                )}...${betDetails[0]?.betContent?.opponent.substr(-4)}`}
-              </Typography>
-            )
-          )}
+      {betDetailsChain?.isSettled ? (
+          betDetailsChain?.rewardClaimed ? (
+            // If the reward is claimed, show the winner information
+            <>
+              {betDetailsChain?.creatorWins ? (
+                betDetails[0]?.betContent?.creator === address ? (
+                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                    You win!
+                  </Typography>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                    Won by Creator:{" "}
+                    {`${betDetails[0]?.betContent?.creator.substr(
+                      0,
+                      4
+                    )}...${betDetails[0]?.betContent?.creator.substr(-4)}`}
+                  </Typography>
+                )
+              ) : (
+                betDetails[0]?.betContent?.opponent === address ? (
+                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                    You win!
+                  </Typography>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+                    Won by Opponent:{" "}
+                    {`${betDetails[0]?.betContent?.opponent.substr(
+                      0,
+                      4
+                    )}...${betDetails[0]?.betContent?.opponent.substr(-4)}`}
+                  </Typography>
+                )
+              )}
         </>
         ) : (
           // If the bet is settled but the reward is not claimed, show the claim button

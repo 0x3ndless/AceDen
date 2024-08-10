@@ -217,7 +217,7 @@ const OpposeBet = ({data}) => {
                     <>{`${data && data?.creator.substr(0, 4)}...${data && data?.creator.substr(-4)}`}</>{data && data?.creator === address && "(Me)"}
                 </Link>
             </Tooltip> 
-                &nbsp;bets that the price of <span style={{ fontWeight: 'bold' }}>{data && data?.assetType.toUpperCase()}</span> will be above{' '}
+                &nbsp;bets that the price of <span style={{ fontWeight: 'bold' }}>{data && data?.assetType.toUpperCase()}</span> will be {data && data?.creatorPrediction === 'bullish' ? 'above' : 'below'}{' '}
                 <span style={{ fontWeight: 'bold' }}>${data && data?.targetPrice}</span>
       </Typography>
 
