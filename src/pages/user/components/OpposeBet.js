@@ -184,7 +184,7 @@ const OpposeBet = ({data}) => {
             {message === 'Bet opposed successfully!!' &&
             <>
             <br></br>
-            <Link href={`https://sepolia.basescan.org/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
+            <Link href={`https://base-sepolia.blockscout.com/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
             </>
             }
           </DialogContentText>
@@ -213,7 +213,7 @@ const OpposeBet = ({data}) => {
       
       <Typography sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
             <Tooltip title="Creator" placement="left">
-                <Link href={`https://sepolia.basescan.org/address/${data && data?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                <Link href={`https://base-sepolia.blockscout.com/address/${data && data?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
                     <>{`${data && data?.creator.substr(0, 4)}...${data && data?.creator.substr(-4)}`}</>{data && data?.creator === address && "(Me)"}
                 </Link>
             </Tooltip> 

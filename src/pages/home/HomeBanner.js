@@ -1,7 +1,7 @@
 import React from 'react';
 import { m } from 'framer-motion';
 import { styled } from '@mui/material/styles';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Link, Stack, Typography } from '@mui/material';
 import './home.css';
 import { MotionViewport, varFade } from '../../components/animate';
 
@@ -99,9 +99,16 @@ export default function HomeBanner() {
             </m.div>
 
             <Stack direction="row" justifyContent="center" spacing={3} sx={{mt: 2 }} >
-              <m.img variants={varFade().inUp} src="/icons/base-chain.svg" width={60} />
-              <m.img variants={varFade().inUp} src="/icons/pyth.png" width={60} />    
-              <m.img variants={varFade().inUp} src="/icons/blockscout.svg" width={80} />       
+              <Link href={`https://pyth.network/`} target="_blank" rel="noopener">
+                <m.img variants={varFade().inUp} src="/icons/pyth.png" width={70} />    
+              </Link>
+              <Link href={`https://www.blockscout.com/`} target="_blank" rel="noopener">
+                <m.img variants={varFade().inUp} src="/icons/blockscout.png" width={110} />      
+              </Link> 
+              
+              <Link href={`https://www.base.org/`} target="_blank" rel="noopener">
+                <m.img variants={varFade().inUp} src="/icons/base-chain.svg" width={70} />
+              </Link> 
             </Stack>
           </Stack>
         </Box>

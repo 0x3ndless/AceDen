@@ -65,7 +65,7 @@ export default function ProfileDetailsCard({ userData }) {
             <Typography variant="body2">
               Wallet: &nbsp;
               <Link
-                href={`https://sepolia.basescan.org/address/${userData && userData.wallet}`}
+                href={`https://base-sepolia.blockscout.com/address/${userData && userData.wallet}`}
                 target="_blank"
                 rel="noopener"
                 style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }}

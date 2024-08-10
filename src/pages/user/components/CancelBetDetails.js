@@ -122,7 +122,7 @@ const CancelBetDetails = ({data}) => {
             {message === 'Bet cancelled successfully!!' &&
             <>
             <br></br>
-            <Link href={`https://sepolia.basescan.org/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
+            <Link href={`https://base-sepolia.blockscout.com/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
             </>
             }
           </DialogContentText>

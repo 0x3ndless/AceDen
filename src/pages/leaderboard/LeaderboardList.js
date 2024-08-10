@@ -67,7 +67,7 @@ const LeaderboardList = ({leaderBoardData}) => {
                             <TableCell sx={{ display: 'flex', alignItems: 'center' }} align="center">
                               <Typography variant="subtitle2" noWrap >
                                 <Tooltip title="User Address" placement="right">
-                                <Link href={`https://sepolia.basescan.org/address/${item.wallet}`} target="_blank" rel="noopener" style={{textDecoration: 'none', fontWeight: 'bold', color: 'none'}}>
+                                <Link href={`https://base-sepolia.blockscout.com/address/${item.wallet}`} target="_blank" rel="noopener" style={{textDecoration: 'none', fontWeight: 'bold', color: 'none'}}>
                                 {item.wallet.substr(0, 4)}...{item.wallet.substr(-4)} {userData && item.wallet === userData[0]?.wallet && "(Me)"}
                                 </Link>
                                 </Tooltip>

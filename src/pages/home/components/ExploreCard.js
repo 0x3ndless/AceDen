@@ -92,7 +92,7 @@ const ExploreCard = ({data}) => {
         <Typography variant="subtitle2" sx={{ mt: 2, textAlign: 'center' }}>
         <Tooltip title="Creator" placement="right">
           <Link
-            href={`https://sepolia.basescan.org/address/${data?.creator}`}
+            href={`https://base-sepolia.blockscout.com/address/${data?.creator}`}
             target="_blank"
             rel="noopener"
             style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }}

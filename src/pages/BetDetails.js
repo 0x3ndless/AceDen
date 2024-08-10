@@ -280,7 +280,7 @@ export default function BetDetails() {
             {message === 'Reward claimed successfully!!' &&
             <>
             <br></br>
-            <Link href={`https://sepolia.basescan.org/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
+            <Link href={`https://base-sepolia.blockscout.com/tx/${transaction}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold' }} > View Txn<Iconify icon={'majesticons:open'} sx={{verticalAlign: 'middle', ml: 0.5}}/></Link>
             </>
             }
           </DialogContentText>
@@ -311,7 +311,7 @@ export default function BetDetails() {
 
             <Typography sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
             <Tooltip title="Creator" placement="left">
-                <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                <Link href={`https://base-sepolia.blockscout.com/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
                     <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
                 </Link>
             </Tooltip> 
@@ -365,7 +365,7 @@ export default function BetDetails() {
                           Opposed By
                         </Typography>
                         <Typography variant="subtitle2" sx={{textAlign: 'center' }}>
-                            <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                            <Link href={`https://base-sepolia.blockscout.com/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
                                 <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
                             </Link>
                         </Typography>
@@ -458,14 +458,14 @@ export default function BetDetails() {
                   {betDetailsChain?.creatorWins ? (
                     <Typography variant="h6" sx={{ textAlign: "center" }}>
                       Won by Creator 👑<br></br>
-                      <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                      <Link href={`https://base-sepolia.blockscout.com/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
                         <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.creator?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.creator === address && "(Me)"}
                       </Link>
                     </Typography>
                   ) : (
                     <Typography variant="h6" sx={{ textAlign: "center" }}>
                       Won by Opposer 👑<br></br>
-                      <Link href={`https://sepolia.basescan.org/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
+                      <Link href={`https://base-sepolia.blockscout.com/address/${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent}`} target="_blank" rel="noopener" style={{ textDecoration: 'none', fontWeight: 'bold', color: 'none' }} >
                         <>{`${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(0, 4)}...${betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent?.substr(-4)}`}</>{betDetails && betDetails[0] && betDetails[0]?.betContent?.opponent === address && "(Me)"}
                       </Link>
                     </Typography>
