@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 import { Button, Dialog, DialogContent, DialogContentText, Box, Typography, Link } from '@mui/material';
 import Iconify from '../../../components/Iconify';
 //Redux
@@ -13,7 +12,7 @@ import successAnimation from '../../../animations/success.json';
 import loadingAnimation from '../../../animations/loading.json';
 
 
-const CancelBet = ({data}) => {
+const CancelBetDetails = ({data}) => {
 
 
     const emptyAddress = '0x0000000000000000000000000000000000000000';
@@ -166,8 +165,8 @@ const CancelBet = ({data}) => {
             Cancel Bet
         </Button>
     : 
-      <Button component={RouterLink} to={`/bet/${betDetails?._id}`} variant="outlined" sx={{ mb: 2 }}>
-        View Details
+      <Button disabled variant="outlined" sx={{ mb: 2 }}>
+        Loading...
       </Button>
       }
     
@@ -175,4 +174,4 @@ const CancelBet = ({data}) => {
   )
 }
 
-export default CancelBet
+export default CancelBetDetails

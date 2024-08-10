@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { Avatar,  Button, Card, Typography, Link, Divider, Grid, Tooltip, IconButton } from '@mui/material';
-import CancelBet from '../../user/components/CancelBet';
 import Iconify from '../../../components/Iconify';
 
 const ExploreCard = ({data}) => {
@@ -129,7 +128,9 @@ const ExploreCard = ({data}) => {
         <Divider sx={{ width: '100%', mb: 2 }} />
   
           {data?.creator === address ? 
-            <CancelBet data={data && data} />
+            <Button component={RouterLink} to={`/bet/${data?._id}`} variant="outlined" sx={{ mb: 2 }}>
+              Bet Details
+            </Button>
             :
             <Button component={RouterLink} to={`/bet/${data?._id}`} startIcon={<Iconify icon="streamline-emojis:thumbs-down-2" />} variant="outlined" sx={{ mb: 2 }}>
               Oppose this Bet

@@ -14,7 +14,6 @@ import Iconify from '../../../components/Iconify';
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBets } from '../../../redux/features/contractSlice';
-import CancelBet from '../../user/components/CancelBet';
 // ----------------------------------------------------------------------
 
 
@@ -70,7 +69,7 @@ export default function BetsSectionCard() {
     <Container component={MotionViewport} sx={{ pb: 10, textAlign: 'center' }}>
 
       <m.div variants={varFade().inUp}>
-        <Typography variant="h3" sx={{mb: 2}}>🎰 <span className="title_keyword2">Open Bets</span></Typography>
+        <Typography variant="h3" sx={{mb: 2}}>🎰 <span className="title_keyword2">Active Bets</span></Typography>
       </m.div>
 
       <m.div variants={varFade().inUp}>
@@ -245,7 +244,9 @@ function FeatureCard({data}) {
       <Divider sx={{ width: '100%', mb: 2 }} />
 
         {data?.creator === address ? 
-          <CancelBet data={data && data} />
+          <Button component={RouterLink} to={`/bet/${data?._id}`} variant="outlined" sx={{ mb: 2 }}>
+            Bet Details
+          </Button>
           :
           <Button component={RouterLink} to={`/bet/${data?._id}`} startIcon={<Iconify icon="streamline-emojis:thumbs-down-2" />} variant="outlined" sx={{ mb: 2 }}>
             Oppose this Bet

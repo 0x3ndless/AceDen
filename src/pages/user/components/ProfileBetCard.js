@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Iconify from '../../../components/Iconify';
 // @mui
-import { Card, Typography, Tooltip, IconButton, Avatar, Divider, Grid } from '@mui/material';
-import CancelBet from './CancelBet';
+import { Card, Typography, Tooltip, IconButton, Avatar, Divider, Grid, Button } from '@mui/material';
 // ----------------------------------------------------------------------
 
 export default function ProfileBetCard({ data }) {
@@ -115,7 +115,9 @@ export default function ProfileBetCard({ data }) {
 
         <Divider sx={{ width: '100%', mb: 2 }} />
 
-        <CancelBet data={data && data} />
+        <Button component={RouterLink} to={`/bet/${data?._id}`} variant="outlined" sx={{ mb: 2 }}>
+          View Details
+        </Button>
       </Card>
     </>
   );

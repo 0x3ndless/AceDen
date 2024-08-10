@@ -23,8 +23,6 @@ const LeaderboardList = ({leaderBoardData}) => {
 
   const { userData } = useSelector((state) => ({...state.app}));
 
-  console.log(leaderBoardData)
-
   return (
     <>
 
