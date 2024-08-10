@@ -1,5 +1,6 @@
 import { m } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Slider from 'react-slick';
 // @mui
@@ -98,7 +99,7 @@ export default function BetsSectionCard() {
             {allBets && allBets[0] && allBets[0].length > 0 &&
           <>
             {allBets[0].map((data) => (
-              <Box key={data.id} component={m.div} variants={varFade().in} sx={{ px: 1.5, mt: 5, mb: 7 }}>
+              <Box key={data.id} component={m.div} variants={varFade().in} sx={{ px: 1.5, mt: 5 }}>
               <FeatureCard data={data}  />
               </Box>
             ))}
@@ -108,7 +109,11 @@ export default function BetsSectionCard() {
       }
       </Box>
 
-      <Button variant='outlined' size='large'>View All</Button>
+      {allBets && allBets[0] && allBets[0].length < 1 ?
+      <Button component={RouterLink} to="/explore" variant='outlined' size='large' sx={{mt: 7}}>View All</Button>
+      : 
+      <Button component={RouterLink} to="/explore" variant='outlined' size='large' >View All</Button>
+      }
     </Container>
   );
 }

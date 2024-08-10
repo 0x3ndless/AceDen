@@ -83,7 +83,11 @@ export default function UserLayout() {
             <ConnectAuthorize /> : !accessTokenExists || (!isConnected) ? <Connect /> : null
            }
 
-        {isDesktop && <MenuDesktop isOffset={isOffset} navConfig={navConfig} />}
+          {isConnected && (localStorage.getItem('access_token') !== null) ?
+             isDesktop && <MenuDesktop isOffset={isOffset} navConfig={navConfig} />
+              : null
+           }
+        
 
           {isConnected && (localStorage.getItem('access_token') !== null) ?
             <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>

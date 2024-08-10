@@ -47,6 +47,7 @@ export default function Router() {
       children: [
         { path: '/profile', element: <ProtectedRoute element= {<Profile />} />},
         { path: '/bet/create', element: <ProtectedRoute element= {<Bet />} />},
+        { path: '/explore', element: <Explore />},
       ]
     },
 
@@ -56,6 +57,7 @@ export default function Router() {
 
 // App Routes
 const Home = Loadable(lazy(() => import('../pages/Home')));
+const Explore = Loadable(lazy(() => import('../pages/Explore')));
 const Profile = Loadable(lazy(() => import('../pages/Profile')));
 const Bet = Loadable(lazy(() => import('../pages/Bet')));
 const Page404 = Loadable(lazy(() => import('../pages/Page404')));
