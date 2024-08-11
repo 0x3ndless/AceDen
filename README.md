@@ -8,5 +8,7 @@ AceDen is a peer-to-peer betting platform where users wager on whether cryptocur
 
 **Backend Repo**: **[aceden-backend](https://github.com/0x3ndless/AceDen-backend)**
 
+**Relayer Repo**: **[aceden-relyer](https://github.com/0x3ndless/AceDen-relayer)**
+
 
 **SmartContract**: **[aceden-smartcontract](https://base-sepolia.blockscout.com/address/0x1b39292A18f4e6F50e219bD21c60E014D79203D5)**
